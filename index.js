@@ -7,23 +7,23 @@ const PORT = 3000;
 
 // Create a connection to the database
 const connection = mysql.createConnection({
-host: 'localhost',
-user: 'root',
-password: '',
-database: "licenta_db"	
+	host: 'localhost',
+	user: 'root',
+	password: '',
+	database: "licenta_db"
 });
 
 // open the MySQL connection
 connection.connect(error => {
-	if (error){
+	if (error) {
 		console.log("A error has been occurred "
-			+ "while connecting to database.");	 
+			+ "while connecting to database.");
 		throw error;
 	}
-	
+
 	//If Everything goes correct, Then start Express Server
-	app.listen(PORT, ()=>{
+	app.listen(PORT, () => {
 		console.log("Database connection is Ready and "
-			+ "Server is Listening on Port ", PORT);
+			+ "Server is Listening on Port asdasd ", PORT);
 	})
 });
