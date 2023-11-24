@@ -30,7 +30,7 @@ app.use(cookieParser());
 
 app.use(
   cors({
-    origin: ["*"],
+    origin: ["http://localhost:19006", "https://backend-server-g154.onrender.com"],
     optionsSuccessStatus: 200,
     credentials: true,
     methods: ["GET", "POST", "DELETE", "PUT", "OPTIONS"],
