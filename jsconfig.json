@@ -8,8 +8,13 @@
     "strictNullChecks": true,
     "strictFunctionTypes": true
   },
+<<<<<<< HEAD
   "exclude": [
     "node_modules",
     "**/node_modules/*"
   ]
 }
+=======
+  "exclude": ["node_modules", "**/node_modules/*"]
+}
+>>>>>>> 9e51a9d37501ad2b7604bf67dc285a29fbcce1bd
