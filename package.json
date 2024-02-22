@@ -4,7 +4,7 @@
   "description": "Backend server for AdministrareCamineUPG",
   "main": "server.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "start": "nodemon server.js"
   },
   "author": "Adrian Neagu (EidriiaN)",
   "license": "ISC",
@@ -18,5 +18,8 @@
     "express-session": "^1.17.3",
     "jsonwebtoken": "^9.0.2",
     "mysql": "^2.18.1"
+  },
+  "devDependencies": {
+    "nodemon": "^3.0.3"
   }
 }
