@@ -1,16 +1,17 @@
 import React from "react";
-import { View, StyleSheet, Text, FlatList } from "react-native";
+import { View, StyleSheet, Text, FlatList, Pressable } from "react-native";
 import { NavigationContainer } from "@react-navigation/native";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import PrimulTab from "../tabs/PrimulTab";
 import HomeTab from "../tabs/homeTab";
-import TreiTab from "../tabs/TreiTab";
+import ComplainTab from "../tabs/complainTab";
 import { Entypo } from "@expo/vector-icons";
 import { FontAwesome5 } from "@expo/vector-icons";
+import { FontAwesome6 } from "@expo/vector-icons";
 
 const Tab = createBottomTabNavigator();
 
-export default function Home() {
+export default function Home({ navigation }) {
   return (
     <View style={{ overflow: "hidden", height: "100%" }}>
       <Tab.Navigator
@@ -24,13 +25,26 @@ export default function Home() {
           headerTitle: "Caminul 6",
           headerTitleAlign: "center",
           headerRight: () => (
-            <View style={{marginRight:10}}>
+            <Pressable
+              style={{ marginRight: 10 }}
+              onPress={() => {
+                navigation.navigate("settings");
+              }}
+            >
               <FontAwesome5 name="cog" size={24} color="black" />
-            </View>
+            </Pressable>
           ),
         }}
       >
-        <Tab.Screen name="Nu stiu" component={PrimulTab} />
+        <Tab.Screen
+          name="Lista cereri"
+          component={PrimulTab}
+          options={{
+            tabBarIcon: ({ color }) => (
+              <FontAwesome6 name="list-check" size={24} color={color} />
+            ),
+          }}
+        />
         <Tab.Screen
           name="Acasa"
           component={HomeTab}
@@ -42,7 +56,7 @@ export default function Home() {
         />
         <Tab.Screen
           name="Reclamatii"
-          component={TreiTab}
+          component={ComplainTab}
           options={{
             tabBarIcon: ({ color }) => (
               <FontAwesome5 name="book" size={24} color={color} />

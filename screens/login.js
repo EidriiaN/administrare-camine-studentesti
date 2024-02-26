@@ -1,3 +1,4 @@
+import { EXPO_PUBLIC_API_URL } from "@env";
 import React from "react";
 import { useState } from "react";
 import axios from "axios";
@@ -10,6 +11,7 @@ import {
   Keyboard,
   KeyboardAvoidingView,
   Platform,
+  Pressable,
   StyleSheet,
 } from "react-native";
 const logo = require("../assets/logo-upg-2.png");
@@ -43,7 +45,7 @@ export default function Login({ navigation }) {
     };
 
     axios
-      .post("http://localhost:3000/login", credentials, {
+      .post(`http://${EXPO_PUBLIC_API_URL}:3000/login`, credentials, {
         withCredentials: true,
       })
       .then((response) => {
@@ -52,7 +54,7 @@ export default function Login({ navigation }) {
           setEmail("");
           setPassword("");
           setErrors({});
-          navigation.replace("home");
+          navigation.navigate("home");
           // Executați acțiuni corespunzătoare pentru autentificarea reușită
         } else {
           console.log("Autentificare eșuată!");
@@ -96,6 +98,26 @@ export default function Login({ navigation }) {
           <Text style={styles.errorText}>{errors.password}</Text>
         ) : null}
         <Button title="Login" onPress={handleSubmit} />
+        <View
+          style={{
+            marginTop: "8%",
+            flexDirection: "row",
+            justifyContent: "flex-end",
+            alignContent: "center",
+            gap: 10,
+          }}
+        >
+          <Pressable
+            onPress={() => {
+              navigation.navigate("register");
+            }}
+          >
+            <Text style={{ fontSize: 15, color: "gray" }}>Inregistrare</Text>
+          </Pressable>
+          <Pressable>
+            <Text style={{ fontSize: 15, color: "gray" }}>Am uitat parola</Text>
+          </Pressable>
+        </View>
       </View>
     </KeyboardAvoidingView>
   );

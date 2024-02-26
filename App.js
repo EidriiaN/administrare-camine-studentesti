@@ -1,3 +1,4 @@
+import { EXPO_PUBLIC_API_URL } from "@env";
 import React, { useEffect, useState } from "react";
 import { StatusBar } from "expo-status-bar";
 import {
@@ -6,6 +7,7 @@ import {
   ActivityIndicator,
   View,
   Platform,
+  Pressable,
 } from "react-native";
 import { NavigationContainer } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
@@ -14,12 +16,15 @@ import Home from "./screens/home";
 import axios from "axios";
 import { MaterialIcons } from "@expo/vector-icons";
 import MyRoom from "./screens/myRoom";
+import Settings from "./screens/settings";
+import Register from "./screens/register";
 
 const Stack = createNativeStackNavigator();
+console.log(EXPO_PUBLIC_API_URL, "env");
 
 export default function App() {
   const [isCheckingSession, setIsCheckingSession] = useState(true);
-  const [isLogged, setIsLogged] = useState(true);
+  const [isLogged, setIsLogged] = useState(false);
 
   useEffect(() => {
     const handleBackButton = () => {
@@ -53,9 +58,12 @@ export default function App() {
   useEffect(() => {
     const checkIfIsLogged = async () => {
       try {
-        const response = await axios.get("http://localhost:3000/checkSession", {
-          withCredentials: true,
-        });
+        const response = await axios.get(
+          `http://${EXPO_PUBLIC_API_URL}:3000/checkSession`,
+          {
+            withCredentials: true,
+          }
+        );
 
         if (response.status === 200) {
           setIsLogged(true);
@@ -69,7 +77,7 @@ export default function App() {
         setIsCheckingSession(false);
       }
     };
-
+    console.log(EXPO_PUBLIC_API_URL, "env2");
     checkIfIsLogged();
   }, []);
 
@@ -88,37 +96,36 @@ export default function App() {
     <NavigationContainer>
       <StatusBar style="auto" />
 
-      <Stack.Navigator>
-        {isLogged ? (
-          <>
-            <Stack.Screen
-              name="home"
-              component={Home}
-              options={{
-                headerTitle: "Caminul 6",
-                headerTitleAlign: "center",
-                headerRight: () => (
-                  <MaterialIcons name="settings" size={24} color="black" />
-                ),
-                headerShown: false,
-              }}
-            />
-            <Stack.Screen name="myRoom" component={MyRoom} options={{headerTitle:'Camera 4'}}/>
-          </>
-        ) : (
-          <>
-            <Stack.Screen
-              name="login"
-              component={Login}
-              options={{ headerShown: false }}
-            />
-            <Stack.Screen
-              name="home"
-              component={Home}
-              options={{ headerTitle: "Caminul 6", headerTitleAlign: "center" }}
-            />
-          </>
-        )}
+      <Stack.Navigator initialRouteName={isLogged === true ? "home" : "login"}>
+        <Stack.Screen
+          name="login"
+          component={Login}
+          options={{ headerShown: false }}
+        />
+        <Stack.Screen
+          name="register"
+          component={Register}
+          options={{ headerTitle: "Inregistrare", headerTitleAlign: "center" }}
+        />
+        <Stack.Screen
+          name="home"
+          component={Home}
+          options={{
+            headerTitle: "Caminul 6",
+            headerTitleAlign: "center",
+            headerShown: false,
+          }}
+        />
+        <Stack.Screen
+          name="myRoom"
+          component={MyRoom}
+          options={{ headerTitle: "Camera 4" }}
+        />
+        <Stack.Screen
+          name="settings"
+          component={Settings}
+          options={{ headerTitle: "Setari" }}
+        />
       </Stack.Navigator>
     </NavigationContainer>
   );
