@@ -1,5 +1,5 @@
 import React from "react";
-import { View, StyleSheet, Text } from "react-native";
+import { View, StyleSheet, Text, Platform } from "react-native";
 
 const data = [
   {
@@ -49,15 +49,23 @@ export default function MyRoom() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#FBF9F1",
-    alignContent: "center",
+    backgroundColor: "#f5f5f5",
+    alignItems: "center",
     padding: "5%",
   },
   roomContainer: {
+    width: Platform.OS === "web" ? 700 : null,
     backgroundColor: "white",
     borderColor: "black",
-    borderWidth: 1,
-    borderRadius: 5,
     padding: "2%",
+    borderRadius: 10,
+    shadowColor: "black",
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.25,
+    shadowRadius: 4,
+    elevation: 5,
   },
 });

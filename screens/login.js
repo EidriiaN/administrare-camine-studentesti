@@ -114,7 +114,11 @@ export default function Login({ navigation }) {
           >
             <Text style={{ fontSize: 15, color: "gray" }}>Inregistrare</Text>
           </Pressable>
-          <Pressable>
+          <Pressable
+            onPress={() => {
+              navigation.navigate("forgotPassword");
+            }}
+          >
             <Text style={{ fontSize: 15, color: "gray" }}>Am uitat parola</Text>
           </Pressable>
         </View>

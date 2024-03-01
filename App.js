@@ -18,6 +18,7 @@ import { MaterialIcons } from "@expo/vector-icons";
 import MyRoom from "./screens/myRoom";
 import Settings from "./screens/settings";
 import Register from "./screens/register";
+import ForgotPassword from "./screens/forgotPassword";
 
 const Stack = createNativeStackNavigator();
 console.log(EXPO_PUBLIC_API_URL, "env");
@@ -58,6 +59,10 @@ export default function App() {
   useEffect(() => {
     const checkIfIsLogged = async () => {
       try {
+        if (isLogged === true) {
+          setIsCheckingSession(false);
+          return;
+        }
         const response = await axios.get(
           `http://${EXPO_PUBLIC_API_URL}:3000/checkSession`,
           {
@@ -106,6 +111,14 @@ export default function App() {
           name="register"
           component={Register}
           options={{ headerTitle: "Inregistrare", headerTitleAlign: "center" }}
+        />
+        <Stack.Screen
+          name="forgotPassword"
+          component={ForgotPassword}
+          options={{
+            headerTitle: "Am uitat parola",
+            headerTitleAlign: "center",
+          }}
         />
         <Stack.Screen
           name="home"

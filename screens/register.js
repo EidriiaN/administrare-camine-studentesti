@@ -241,6 +241,7 @@ export default function Register({ navigation }) {
       >
         <View style={styles.form}>
           <Image style={styles.logo} source={logo} resizeMode="contain" />
+          <Text style={styles.input_description}>Informatii personale</Text>
           <Text style={styles.label}>Nume</Text>
           {errors.name ? (
             <Text style={styles.errorText}>{errors.name}</Text>
@@ -330,9 +331,12 @@ export default function Register({ navigation }) {
             style={styles.input}
             value={cnp}
             onChangeText={setCNP}
+            keyboardType="numeric"
             placeholder="CNP"
           />
-          <Text>Informații despre instituția de învățământ</Text>
+          <Text style={styles.input_description}>
+            Informații despre instituția de învățământ
+          </Text>
 
           <Text style={styles.label}>Numele instituției de învățământ</Text>
           {errors.institutionName ? (
@@ -384,7 +388,7 @@ export default function Register({ navigation }) {
             />
           </View>
 
-          <Text>Informații despre cămin</Text>
+          <Text style={styles.input_description}>Informații despre cămin</Text>
           <Text style={styles.label}>Opțiunea preferată pentru cămin</Text>
           {errors.dormPreference ? (
             <Text style={styles.errorText}>{errors.dormPreference}</Text>
@@ -411,7 +415,7 @@ export default function Register({ navigation }) {
             />
           </View>
 
-          <Text>Informații de urgență</Text>
+          <Text style={styles.input_description}>Informații de urgență</Text>
           <Text style={styles.label}>
             Numele unei persoane de contact în caz de urgență
           </Text>
@@ -461,6 +465,8 @@ const styles = StyleSheet.create({
   form: {
     width: Platform.OS === "web" ? 700 : null,
     alignSelf: Platform.OS == "web" ? "center" : null,
+    marginTop: Platform.OS == "web" ? "1%" : "5%",
+    marginBottom: Platform.OS == "web" ? "4%" : "6%",
     backgroundColor: "white",
     padding: 20,
     borderRadius: 10,
@@ -491,5 +497,14 @@ const styles = StyleSheet.create({
   errorText: {
     color: "red",
     marginBottom: 10,
+  },
+  input_description: {
+    fontSize: Platform.OS == "web" ? 18 : 15,
+    textAlign: "center",
+    marginTop: Platform.OS == "web" ? "2%" : "4%",
+    marginBottom: Platform.OS == "web" ? "3%" : "5%",
+    paddingBottom: Platform.OS == "web" ? "1%" : "2%",
+    borderBottomColor: "#b6b6b6",
+    borderBottomWidth: 3,
   },
 });

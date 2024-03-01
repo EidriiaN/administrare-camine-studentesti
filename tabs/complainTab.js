@@ -26,15 +26,21 @@ export default function ComplainTab() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#FBF9F1",
+    backgroundColor: "#f5f5f5",
     alignContent: "center",
     padding: "3%",
   },
   complainContainer: {
     backgroundColor: "white",
-    borderColor: "black",
-    borderWidth: 1,
-    borderRadius: 5,
+    borderRadius: 10,
+    shadowColor: "black",
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.25,
+    shadowRadius: 4,
+    elevation: 5,
     padding: isWeb ? "1%" : "3%",
     width: isWeb ? 700 : null,
     alignSelf: "center",

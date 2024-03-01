@@ -113,7 +113,7 @@ export default function HomeTab({ navigation }) {
             borderRadius: 8,
             borderStyle: "solid",
             borderWidth: 0.8,
-            padding: 8,
+            padding: 10,
             backgroundColor: "white",
           }}
         >
@@ -121,14 +121,30 @@ export default function HomeTab({ navigation }) {
           <View style={{ flexDirection: "row", gap: 3, alignItems: "center" }}>
             <Text style={{ fontSize: 15 }}>{item.date}</Text>
             <AntDesign
-              name="caretdown"
+              name={dropdownIndex === index ? "caretup" : "caretdown"}
               size={14}
               color={dropdownIndex === index ? "black" : "gray"}
             />
           </View>
         </TouchableOpacity>
         {dropdownIndex === index && (
-          <View style={{ height: "auto", gap: 20 }}>
+          <View
+            style={{
+              height: "auto",
+              gap: 20,
+              backgroundColor: "#FBF9F1",
+              padding: 8,
+              margin: 5,
+              shadowColor: "black",
+              shadowOffset: {
+                width: 0,
+                height: 1,
+              },
+              shadowOpacity: 0.25,
+              shadowRadius: 5,
+              elevation: 5,
+            }}
+          >
             <Text style={{ textAlign: "left", fontSize: 20 }}>
               {item.message}
             </Text>
@@ -148,12 +164,12 @@ export default function HomeTab({ navigation }) {
           onPress={() => {
             navigation.navigate("myRoom");
           }}
-          style={styles.top_camera}
+          style={styles.top_containers}
         >
           <Text>Camera</Text>
           <Text>4</Text>
         </Pressable>
-        <View style={styles.top_camere}>
+        <View style={styles.top_containers}>
           <Text>Mai sunt disponibile</Text>
           <Text>100/200 camere</Text>
         </View>
@@ -183,7 +199,7 @@ export default function HomeTab({ navigation }) {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#FBF9F1",
+    backgroundColor: "#f5f5f5",
     paddingStart: isWeb ? "15%" : null,
     paddingEnd: isWeb ? "15%" : null,
   },
@@ -200,26 +216,23 @@ const styles = StyleSheet.create({
     flex: 0.5,
     marginTop: 10,
   },
-  top_camera: {
+  top_containers: {
     justifyContent: "center",
     alignItems: "center",
-    backgroundColor: "#E5E1DA",
+    backgroundColor: "white",
     height: "75%",
     width: "40%",
-    borderRadius: 15,
-    elevation: 5,
-  },
-  top_camere: {
-    justifyContent: "center",
-    alignItems: "center",
-    backgroundColor: "#E5E1DA",
-    height: "75%",
-    width: "40%",
-    borderRadius: 15,
+    borderRadius: 10,
+    shadowColor: "black",
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.25,
+    shadowRadius: 4,
     elevation: 5,
   },
   flatListContainer: {
-    backgroundColor: "#FBF9F1",
     borderRadius: 6,
     marginTop: "3%",
     margin: "2%",
