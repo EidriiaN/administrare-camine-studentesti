@@ -8,6 +8,7 @@ const cors = require("cors");
 
 const app = express();
 const PORT = 3000;
+const IP_ADDRESS = "localhost";
 
 app.use(
   session({
@@ -24,6 +25,8 @@ app.use(
 const loginRoute = require("./routes/login");
 const indexRoute = require("./routes/index");
 const checkSession = require("./controllers/checkSession");
+const getAdminData = require("./routes/getAdminData");
+const getSessionData = require("./controllers/getSessionData");
 
 app.use(bodyParser.json());
 app.use(cookieParser());
@@ -33,11 +36,12 @@ app.use(
     origin: [
       "http://localhost:19006",
       "https://localhost:19006",
-      "http://192.168.0.185:19006",
-      "https://192.168.0.185:19006",
-      "http://192.168.0.87:3000",
-      "http://192.168.0.87:19006",
-      "exp://192.168.0.87:8081",
+      "http://localhost:3000",
+      "http://192.168.0.101:19006",
+      "http://192.168.0.101:3000",
+      "exp://192.168.0.101:8081",
+      "http://192.168.0.101:8081",
+      "http://192.168.0.102:59782",
     ],
     optionsSuccessStatus: 200,
     credentials: true,
@@ -55,7 +59,9 @@ app.use((req, res, next) => {
 app.use("/login", loginRoute);
 app.use("/", indexRoute);
 app.use("/checkSession", checkSession);
+app.use("/getAdminData", getAdminData);
+app.use("/getSessionData", getSessionData);
 
-app.listen(PORT, () => {
-  console.log("The server is listening on Port ", PORT);
+app.listen(PORT, IP_ADDRESS, () => {
+  console.log(`Serverul este ascultat la adresa: http://${IP_ADDRESS}:${PORT}`);
 });
