@@ -1,12 +1,13 @@
 import React from "react";
-import { View, StyleSheet, Text, Platform } from "react-native";
+import { View, StyleSheet, Text, Platform, ScrollView } from "react-native";
 import Dropdown from "../components/dropDown";
 
 const isWeb = Platform.OS === "web";
+const Container = isWeb ? View : ScrollView;
 
 export default function ComplainTab() {
   return (
-    <View style={styles.container}>
+    <Container style={styles.container}>
       <View style={styles.complainContainer}>
         <Text style={{ fontSize: 30, textAlign: "center", marginBottom: "3%" }}>
           Reclamatii si plangeri
@@ -19,7 +20,7 @@ export default function ComplainTab() {
           înțelegere și colaborare!
         </Text>
       </View>
-    </View>
+    </Container>
   );
 }
 
@@ -28,7 +29,7 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: "#f5f5f5",
     alignContent: "center",
-    padding: "3%",
+    margin: "3%",
   },
   complainContainer: {
     backgroundColor: "white",
@@ -42,7 +43,8 @@ const styles = StyleSheet.create({
     shadowRadius: 4,
     elevation: 5,
     padding: isWeb ? "1%" : "3%",
-    width: isWeb ? 700 : null,
+    width: isWeb ? 700 : "100%",
     alignSelf: "center",
+    flex: 1,
   },
 });

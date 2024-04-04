@@ -80,7 +80,7 @@ const data = [
   },
 ];
 
-export default function PrimulTab() {
+export default function ListComplainTab() {
   const [sortedData, setSortedData] = useState(data);
   const [sortBy, setSortBy] = useState(null);
   const [sortOrder, setSortOrder] = useState("asc"); // Stare pentru a ține evidența ordinii sortării: "asc" sau "desc"

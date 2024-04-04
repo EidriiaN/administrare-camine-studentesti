@@ -1,4 +1,3 @@
-import { EXPO_PUBLIC_API_URL } from "@env";
 import React, { useEffect, useState } from "react";
 import { StatusBar } from "expo-status-bar";
 import {
@@ -19,13 +18,16 @@ import MyRoom from "./screens/myRoom";
 import Settings from "./screens/settings";
 import Register from "./screens/register";
 import ForgotPassword from "./screens/forgotPassword";
+import HomeAdmin from "./screens/homeAdmin";
+import ComplainScreen from "./screens/AdminScreens/complainScreen";
 
 const Stack = createNativeStackNavigator();
-console.log(EXPO_PUBLIC_API_URL, "env");
 
 export default function App() {
+  const ip = "localhost";
   const [isCheckingSession, setIsCheckingSession] = useState(true);
   const [isLogged, setIsLogged] = useState(false);
+  const [role, setRole] = useState("");
 
   useEffect(() => {
     const handleBackButton = () => {
@@ -63,26 +65,23 @@ export default function App() {
           setIsCheckingSession(false);
           return;
         }
-        const response = await axios.get(
-          `http://${EXPO_PUBLIC_API_URL}:3000/checkSession`,
-          {
-            withCredentials: true,
-          }
-        );
+        const response = await axios.get(`http://${ip}:3000/checkSession`, {
+          withCredentials: true,
+        });
 
         if (response.status === 200) {
           setIsLogged(true);
-          console.log(isLogged, "merge");
+          setRole(response.data);
+        } else {
+          console.log("Nu exista sesiune");
         }
       } catch (error) {
-        // Gestionare eroare: afișați un mesaj sau faceți altceva pentru a informa utilizatorii despre o eroare
-        console.error("Error checking session:", error.message);
+        console.error("Eroare in verificarea sesiunii:", error);
       } finally {
-        // Indiferent de rezultat, setați starea de verificare a sesiunii ca fiind finalizată
         setIsCheckingSession(false);
       }
     };
-    console.log(EXPO_PUBLIC_API_URL, "env2");
+
     checkIfIsLogged();
   }, []);
 
@@ -97,11 +96,22 @@ export default function App() {
       </View>
     );
   }
+
+  console.log(isLogged, "loguri1");
+  console.log(role, "loguri2");
   return (
     <NavigationContainer>
       <StatusBar style="auto" />
 
-      <Stack.Navigator initialRouteName={isLogged === true ? "home" : "login"}>
+      <Stack.Navigator
+        initialRouteName={
+          isLogged === true
+            ? role === "admin"
+              ? "homeAdmin"
+              : "home"
+            : "login"
+        }
+      >
         <Stack.Screen
           name="login"
           component={Login}
@@ -130,6 +140,15 @@ export default function App() {
           }}
         />
         <Stack.Screen
+          name="homeAdmin"
+          component={HomeAdmin}
+          options={{
+            headerTitle: "Admin",
+            headerTitleAlign: "center",
+            headerShown: false,
+          }}
+        />
+        <Stack.Screen
           name="myRoom"
           component={MyRoom}
           options={{ headerTitle: "Camera 4" }}
@@ -138,6 +157,11 @@ export default function App() {
           name="settings"
           component={Settings}
           options={{ headerTitle: "Setari" }}
+        />
+        <Stack.Screen
+          name="ComplainScreen"
+          component={ComplainScreen}
+          options={{ headerTitle: "Lista cu plangeri" }}
         />
       </Stack.Navigator>
     </NavigationContainer>

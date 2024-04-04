@@ -1,4 +1,3 @@
-import { EXPO_PUBLIC_API_URL } from "@env";
 import React from "react";
 import { useState } from "react";
 import axios from "axios";
@@ -17,6 +16,7 @@ import {
 const logo = require("../assets/logo-upg-2.png");
 
 export default function Login({ navigation }) {
+  const ip = "localhost";
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [errors, setErrors] = useState({});
@@ -45,7 +45,7 @@ export default function Login({ navigation }) {
     };
 
     axios
-      .post(`http://${EXPO_PUBLIC_API_URL}:3000/login`, credentials, {
+      .post(`http://${ip}:3000/login`, credentials, {
         withCredentials: true,
       })
       .then((response) => {
@@ -54,7 +54,10 @@ export default function Login({ navigation }) {
           setEmail("");
           setPassword("");
           setErrors({});
-          navigation.navigate("home");
+          const userData = response.data.userData;
+          userData.role === "admin"
+            ? navigation.navigate("homeAdmin", { userData })
+            : navigation.navigate("home", { userData });
           // Executați acțiuni corespunzătoare pentru autentificarea reușită
         } else {
           console.log("Autentificare eșuată!");

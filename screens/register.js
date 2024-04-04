@@ -1,4 +1,3 @@
-import { EXPO_PUBLIC_API_URL } from "@env";
 import React from "react";
 import { useState } from "react";
 import axios from "axios";
@@ -325,6 +324,32 @@ export default function Register({ navigation }) {
               value={gender}
             />
           </View>
+          <Text style={styles.label}>Seria actului de identitate</Text>
+          {errors.cnp && <Text style={styles.errorText}>{errors.cnp}</Text>}
+          <TextInput
+            style={styles.input}
+            value={cnp}
+            onChangeText={setCNP}
+            placeholder="seria"
+          />
+          <Text style={styles.label}>Numarul actului de identitate</Text>
+          {errors.cnp && <Text style={styles.errorText}>{errors.cnp}</Text>}
+          <TextInput
+            style={styles.input}
+            value={cnp}
+            onChangeText={setCNP}
+            keyboardType="numeric"
+            placeholder="numarul"
+          />
+          <Text style={styles.label}>Eliberat de</Text>
+          {errors.cnp && <Text style={styles.errorText}>{errors.cnp}</Text>}
+          <TextInput
+            style={styles.input}
+            value={cnp}
+            onChangeText={setCNP}
+            keyboardType="numeric"
+            placeholder=""
+          />
           <Text style={styles.label}>CNP (Cod Numeric Personal)</Text>
           {errors.cnp && <Text style={styles.errorText}>{errors.cnp}</Text>}
           <TextInput
