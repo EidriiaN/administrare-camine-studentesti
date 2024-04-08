@@ -1,14 +1,5 @@
 import React, { useState } from "react";
-import {
-  View,
-  StyleSheet,
-  Text,
-  Platform,
-  TouchableOpacity,
-  Pressable,
-  Button,
-  FlatList,
-} from "react-native";
+import { View, StyleSheet, Text, Platform, TouchableOpacity, Pressable, Button, FlatList } from "react-native";
 const isWeb = Platform.OS === "web";
 
 const data = [
@@ -20,8 +11,7 @@ const data = [
     emergency: "Non-urgent",
     status: false,
     date: "2024-10-05",
-    message:
-      "Colegii de la camera 3 faci galagie dupa ora 12 noapte si imi perturba somnul.",
+    message: "Colegii de la camera 3 faci galagie dupa ora 12 noapte si imi perturba somnul.",
   },
   {
     id: "2",
@@ -71,8 +61,7 @@ const data = [
     emergency: "Urgent",
     status: false,
     date: "2024-3-1",
-    message:
-      "Scaunul de la birou este rupt și nu pot să-l folosesc în siguranță.",
+    message: "Scaunul de la birou este rupt și nu pot să-l folosesc în siguranță.",
   },
   {
     id: "7",
@@ -92,8 +81,7 @@ const data = [
     emergency: "Urgent",
     status: false,
     date: "2020-1-14",
-    message:
-      "Vecinul de la etajul doi își lasă constant animalul de companie să latre la ore târzii.",
+    message: "Vecinul de la etajul doi își lasă constant animalul de companie să latre la ore târzii.",
   },
 ];
 
@@ -116,9 +104,7 @@ export default function ListComplainAdminTab({ navigation }) {
   const sortDataByUrgency = () => {
     const urgencyOrder = { "Non-urgent": 0, "Semi-urgent": 1, Urgent: 2 };
     const sorted = [...data].sort((a, b) => {
-      return sortOrder === "asc"
-        ? urgencyOrder[a.emergency] - urgencyOrder[b.emergency]
-        : urgencyOrder[b.emergency] - urgencyOrder[a.emergency];
+      return sortOrder === "asc" ? urgencyOrder[a.emergency] - urgencyOrder[b.emergency] : urgencyOrder[b.emergency] - urgencyOrder[a.emergency];
     });
     setSortedData(sorted);
     setSortBy("Urgency");
@@ -127,17 +113,7 @@ export default function ListComplainAdminTab({ navigation }) {
 
   const sortDataByStatus = () => {
     const sorted = [...data].sort((a, b) => {
-      return sortOrder === "asc"
-        ? a.status === b.status
-          ? 0
-          : a.status
-          ? 1
-          : -1
-        : a.status === b.status
-        ? 0
-        : a.status
-        ? -1
-        : 1;
+      return sortOrder === "asc" ? (a.status === b.status ? 0 : a.status ? 1 : -1) : a.status === b.status ? 0 : a.status ? -1 : 1;
     });
     setSortedData(sorted);
     setSortBy("Status");
@@ -149,9 +125,7 @@ export default function ListComplainAdminTab({ navigation }) {
     const day = date.getDate();
     const month = date.getMonth() + 1; // Indexul lunilor începe de la 0, așa că adăugăm 1
     const year = date.getFullYear();
-    return `${day < 10 ? "0" : ""}${day}:${
-      month < 10 ? "0" : ""
-    }${month}:${year}`;
+    return `${day < 10 ? "0" : ""}${day}:${month < 10 ? "0" : ""}${month}:${year}`;
   };
 
   const renderItem = ({ item, index }) => {
@@ -178,9 +152,7 @@ export default function ListComplainAdminTab({ navigation }) {
             {item.status === true ? (
               <Text style={{ fontSize: 13, color: "#00E200" }}>rezolvat</Text>
             ) : (
-              <Text style={{ fontSize: 13, color: "#FAD800" }}>
-                in asteptare
-              </Text>
+              <Text style={{ fontSize: 13, color: "#FAD800" }}>in asteptare</Text>
             )}
             {/* <Text style={{ fontSize: 13 }}>{item.status}</Text> */}
           </View>
@@ -202,9 +174,7 @@ export default function ListComplainAdminTab({ navigation }) {
   return (
     <View style={styles.container}>
       <View style={styles.sortContainer}>
-        <Text style={{ marginBottom: "3%", marginStart: "3%", fontSize: 18 }}>
-          Sortare
-        </Text>
+        <Text style={{ marginBottom: "3%", marginStart: "3%", fontSize: 18 }}>Sortare</Text>
         <View
           style={{
             flexDirection: "row",

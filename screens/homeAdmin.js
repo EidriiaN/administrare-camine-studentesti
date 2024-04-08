@@ -19,6 +19,7 @@ import { FontAwesome6 } from "@expo/vector-icons";
 import HomeAdminTab from "../tabs/AdminTabs/homeAdminTab";
 import ListComplainAdminTab from "../tabs/AdminTabs/listComplainAdminTab";
 import axios from "axios";
+import RequestsAdminTab from "../tabs/AdminTabs/requestsAdminTab";
 
 const Tab = createBottomTabNavigator();
 
@@ -71,6 +72,16 @@ export default function HomeAdmin({ navigation, route }) {
         <Tab.Screen
           name="Reclamatii"
           component={ComplainTab}
+          // initialParams={{ userData: userData }}
+          options={{
+            tabBarIcon: ({ color }) => (
+              <FontAwesome5 name="book" size={24} color={color} />
+            ),
+          }}
+        />
+         <Tab.Screen
+          name="Conturi in asteptare"
+          component={RequestsAdminTab}
           // initialParams={{ userData: userData }}
           options={{
             tabBarIcon: ({ color }) => (

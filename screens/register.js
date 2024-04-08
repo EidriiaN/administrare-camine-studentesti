@@ -7,98 +7,152 @@ import {
   Text,
   TextInput,
   Button,
-  Keyboard,
+  Modal,
   TouchableOpacity,
   KeyboardAvoidingView,
   Platform,
   ScrollView,
   StyleSheet,
+  Pressable,
 } from "react-native";
 import RNPickerSelect from "react-native-picker-select";
 import DateTimePicker from "react-native-ui-datepicker";
 import dayjs from "dayjs";
+import { render } from "react-dom";
 const logo = require("../assets/logo-upg-2.png");
 
 export default function Register({ navigation }) {
-  const [name, setName] = useState("");
-  const [surname, setSurname] = useState("");
-  const [email, setEmail] = useState("");
-  const [phoneNumber, setPhoneNumber] = useState("");
-  const [birthdate, setBirthdate] = useState(dayjs());
+  const ip = "localhost";
+  const [formData, setFormData] = useState({
+    name: "",
+    surname: "",
+    email: "",
+    phoneNumber: "",
+    birthdate: dayjs(),
+    gender: "",
+    locality: "",
+    county: "",
+    street: "",
+    number: "",
+    block: "",
+    staircase: "",
+    floor: "",
+    apartament: "",
+    idSeries: "",
+    idNumber: "",
+    issuedBy: "",
+    issuedAt: dayjs(),
+    cnp: "",
+    studyProgram: "",
+    faculty: "",
+    tuition: "",
+    studyYear: "",
+    specialization: "",
+    dormPreference: "",
+    roomPreference: "",
+    emergencyContactName: "",
+    emergencyContactPhone: "",
+  });
   const [showCalendar, setShowCalendar] = useState(false);
-  const [gender, setGender] = useState("");
-  const [cnp, setCNP] = useState("");
-  const [institutionName, setInstitutionName] = useState("");
-  const [faculty, setFaculty] = useState("");
-  const [studyYear, setStudyYear] = useState("");
-  const [studyProgram, setStudyProgram] = useState("");
-  const [dormPreference, setDormPreference] = useState("");
-  const [roomPreference, setRoomPreference] = useState("");
-  const [emergencyContactName, setEmergencyContactName] = useState("");
-  const [emergencyContactPhone, setEmergencyContactPhone] = useState("");
   const [errors, setErrors] = useState({});
+
+  const [modalVisible, setModalVisible] = useState(false);
 
   const validateForm = () => {
     let errors = {};
-
-    if (!name) errors.name = "Name is required";
-    if (!surname) errors.surname = "Surname is required";
-    if (!birthdate) errors.birthdate = "Birthdate is required";
-
-    if (!gender) errors.gender = "Gender is required";
-    if (!email) errors.email = "Email is required";
-    if (!phoneNumber) errors.phoneNumber = "Phone number is required";
-    if (!cnp) errors.cnp = "CNP is required";
-    if (!institutionName)
-      errors.institutionName = "Institution name is required";
-    if (!faculty) errors.faculty = "Faculty is required";
-    if (!studyYear) errors.studyYear = "Study year is required";
-    if (!studyProgram) errors.studyProgram = "Study program is required";
-    if (!dormPreference) errors.dormPreference = "Dorm preference is required";
-    if (!roomPreference) errors.roomPreference = "Room preference is required";
-    if (!emergencyContactName)
-      errors.emergencyContactName = "Emergency contact name is required";
-    if (!emergencyContactPhone)
-      errors.emergencyContactPhone = "Emergency contact phone is required";
-
+    for (const field in formData) {
+      if (!formData[field]) {
+        errors[field] = `${field.charAt(0).toUpperCase() + field.slice(1)} is required`;
+      }
+    }
     setErrors(errors);
-
     return Object.keys(errors).length === 0;
+  };
+
+  const handleChange = (field, value) => {
+    setFormData((prevData) => ({
+      ...prevData,
+      [field]: value,
+    }));
   };
 
   const handleSubmit = () => {
     if (validateForm()) {
-      handleLogin();
+      axios
+        .post(`http://${ip}:3000/register-request`, formData, { withCredentials: true })
+        .then((response) => {
+          if (response.status === 200) {
+            console.log("Cererea de înregistrare a fost trimisă cu succes!");
+            setModalVisible(true);
+          } else {
+            console.log("Cererea de înregistrare a eșuat!");
+          }
+        })
+        .catch((error) => {
+          console.error("Eroare:", error);
+        });
     }
   };
 
-  const handleLogin = () => {
-    const credentials = {
-      email: email,
-      password: password,
-    };
+  const renderInput = (label, field, keyboardType = "default", inputMode = "text") => (
+    <>
+      <Text style={styles.label}>{label}</Text>
+      {errors[field] && <Text style={styles.errorText}>{errors[field]}</Text>}
+      <TextInput
+        style={styles.input}
+        value={formData[field]}
+        onChangeText={(text) => handleChange(field, text)}
+        keyboardType={keyboardType}
+        inputMode={inputMode}
+      />
+    </>
+  );
 
-    axios
-      .post(`http://${EXPO_PUBLIC_API_URL}:3000/login`, credentials, {
-        withCredentials: true,
-      })
-      .then((response) => {
-        if (response.status === 200) {
-          console.log("Autentificare reușită!");
-          setEmail("");
-          setPassword("");
-          setErrors({});
-          navigation.navigate("home");
-          // Executați acțiuni corespunzătoare pentru autentificarea reușită
-        } else {
-          console.log("Autentificare eșuată!");
-          // Executați acțiuni corespunzătoare pentru autentificarea eșuată
-        }
-      })
-      .catch((error) => {
-        console.error("Eroare:", error);
-      });
-  };
+  const renderPicker = (label, field, options) => (
+    <>
+      <Text style={styles.label}>{label}</Text>
+      {errors[field] && <Text style={styles.errorText}>{errors[field]}</Text>}
+      <View style={styles.input}>
+        <RNPickerSelect
+          placeholder={{ label: `Select ${label.toLowerCase()}`, value: "" }}
+          items={options}
+          onValueChange={(value) => handleChange(field, value)}
+          value={formData[field]}
+        />
+      </View>
+    </>
+  );
+
+  const renderDatePicker = (label, field) => (
+    <>
+      <Text style={styles.label}>{label}</Text>
+      {errors[field] && <Text style={styles.errorText}>{errors[field]}</Text>}
+      <TouchableOpacity onPress={() => setShowCalendar(true)}>
+        <TextInput
+          style={styles.input}
+          value={formData[field] ? formData[field].format("YYYY-MM-DD") : ""}
+          placeholder="YYYY-MM-DD"
+          editable={false}
+        />
+      </TouchableOpacity>
+      {showCalendar && (
+        <View style={{ backgroundColor: "#f5f5f5" }}>
+          <DateTimePicker
+            mode="single"
+            locale="en"
+            date={formData[field]}
+            onChange={(params) => {
+              setFormData((prevData) => ({
+                ...prevData,
+                [field]: params.date,
+              }));
+              setShowCalendar(false);
+            }}
+          />
+        </View>
+      )}
+    </>
+  );
 
   const placeholder = {
     label: "Alege o optiune...",
@@ -123,7 +177,7 @@ export default function Register({ navigation }) {
         { label: "STIINŢE ECONOMICE", value: "se" },
         // Add more options as needed
       ],
-      studyProgram: {
+      specialization: {
         ime: [
           { label: "Automatică şi Informatică Aplicată", value: "aia" },
           { label: "Calculatoare", value: "cal" },
@@ -208,6 +262,18 @@ export default function Register({ navigation }) {
         { label: "1", value: "1" },
       ],
     },
+    tuition: {
+      options: [
+        { label: "Cu taxa", value: "1" },
+        { label: "Fara taxa", value: "0" },
+      ],
+    },
+    study_program: {
+      options: [
+        { label: "Licenta", value: "licenta" },
+        { label: "Master", value: "master" },
+      ],
+    },
     dormPreference: {
       options: [
         { label: "Caminul 3", value: "3" },
@@ -229,245 +295,68 @@ export default function Register({ navigation }) {
   };
 
   return (
-    <KeyboardAvoidingView
-      behavior="padding"
-      keyboardVerticalOffset={-160}
-      style={styles.container}
-    >
-      <ScrollView
-        overScrollMode="never"
-        showsVerticalScrollIndicator={Platform.OS === "web" ? true : false}
-      >
+    <KeyboardAvoidingView behavior="padding" keyboardVerticalOffset={-160} style={styles.container}>
+      <ScrollView overScrollMode="never" showsVerticalScrollIndicator={Platform.OS === "web" ? true : false}>
         <View style={styles.form}>
           <Image style={styles.logo} source={logo} resizeMode="contain" />
+
           <Text style={styles.input_description}>Informatii personale</Text>
-          <Text style={styles.label}>Nume</Text>
-          {errors.name ? (
-            <Text style={styles.errorText}>{errors.name}</Text>
-          ) : null}
-          <TextInput
-            style={styles.input}
-            value={name}
-            onChangeText={setName}
-            placeholder="Neagu"
-          />
 
-          <Text style={styles.label}>Prenume</Text>
-          {errors.surname && (
-            <Text style={styles.errorText}>{errors.surname}</Text>
-          )}
-          <TextInput
-            style={styles.input}
-            value={surname}
-            onChangeText={setSurname}
-            placeholder="Adrian"
-          />
+          {renderInput("Nume", "name")}
+          {renderInput("Prenume", "surname")}
+          {renderInput("Email", "email", "email-address", "email")}
+          {renderInput("Număr de telefon", "phoneNumber", "phone-pad", "numeric")}
+          {renderDatePicker("Data nașterii", "birthdate")}
+          {renderPicker("Sex", "gender", pickerData.gender.options)}
+          {renderInput("Localitate", "locality")}
+          {renderInput("Judet", "county")}
+          {renderInput("Strada", "street")}
+          {renderInput("Numar", "number", "phone-pad", "numeric")}
+          {renderInput("Bloc", "block")}
+          {renderInput("Scara", "staircase")}
+          {renderInput("Etaj", "floor")}
+          {renderInput("Apartament", "apartament")}
 
-          <Text style={styles.label}>Adresă de e-mail</Text>
-          {errors.email && <Text style={styles.errorText}>{errors.email}</Text>}
-          <TextInput
-            style={styles.input}
-            value={email}
-            onChangeText={setEmail}
-            placeholder="xyz@gmail.com"
-          />
+          <Text style={styles.input_description}>Informatii despre actul de indentitate</Text>
 
-          <Text style={styles.label}>Număr de telefon</Text>
-          {errors.phoneNumber && (
-            <Text style={styles.errorText}>{errors.phoneNumber}</Text>
-          )}
-          <TextInput
-            style={styles.input}
-            value={phoneNumber}
-            onChangeText={setPhoneNumber}
-            placeholder="0722196231"
-            keyboardType="numeric"
-          />
+          {renderInput("Seria actului de identitate", "idSeries")}
+          {renderInput("Numarul actului de identitate", "idNumber", "phone-pad", "numeric")}
+          {renderInput("Eliberat de", "issuedBy")}
+          {renderDatePicker("La data de", "issuedAt")}
+          {renderInput("CNP (Cod Numeric Personal)", "cnp", "phone-pad", "numeric")}
 
-          <Text style={styles.label}>Data nașterii</Text>
-          {errors.birthdate && (
-            <Text style={styles.errorText}>{errors.birthdate}</Text>
-          )}
+          <Text style={styles.input_description}>Informații despre instituția de învățământ</Text>
 
-          <TouchableOpacity onPress={() => setShowCalendar(true)}>
-            <TextInput
-              style={styles.input}
-              value={birthdate ? birthdate.format("YYYY-MM-DD") : ""}
-              placeholder="YYYY-MM-DD"
-              editable={false}
-            />
-          </TouchableOpacity>
-
-          {showCalendar && (
-            <View style={{ backgroundColor: "#f5f5f5" }}>
-              <DateTimePicker
-                mode="single"
-                locale="en"
-                date={birthdate}
-                onChange={(params) => {
-                  setBirthdate(params.date);
-                  setShowCalendar(false);
-                }}
-              />
-              {console.log(birthdate, "birthdate")}
-            </View>
-          )}
-          <Text style={styles.label}>Sex</Text>
-          {errors.gender && (
-            <Text style={styles.errorText}>{errors.gender}</Text>
-          )}
-          <View style={styles.input}>
-            <RNPickerSelect
-              placeholder={placeholder}
-              items={pickerData["gender"].options}
-              onValueChange={(value) => setGender(value)}
-              value={gender}
-            />
-          </View>
-          <Text style={styles.label}>Seria actului de identitate</Text>
-          {errors.cnp && <Text style={styles.errorText}>{errors.cnp}</Text>}
-          <TextInput
-            style={styles.input}
-            value={cnp}
-            onChangeText={setCNP}
-            placeholder="seria"
-          />
-          <Text style={styles.label}>Numarul actului de identitate</Text>
-          {errors.cnp && <Text style={styles.errorText}>{errors.cnp}</Text>}
-          <TextInput
-            style={styles.input}
-            value={cnp}
-            onChangeText={setCNP}
-            keyboardType="numeric"
-            placeholder="numarul"
-          />
-          <Text style={styles.label}>Eliberat de</Text>
-          {errors.cnp && <Text style={styles.errorText}>{errors.cnp}</Text>}
-          <TextInput
-            style={styles.input}
-            value={cnp}
-            onChangeText={setCNP}
-            keyboardType="numeric"
-            placeholder=""
-          />
-          <Text style={styles.label}>CNP (Cod Numeric Personal)</Text>
-          {errors.cnp && <Text style={styles.errorText}>{errors.cnp}</Text>}
-          <TextInput
-            style={styles.input}
-            value={cnp}
-            onChangeText={setCNP}
-            keyboardType="numeric"
-            placeholder="CNP"
-          />
-          <Text style={styles.input_description}>
-            Informații despre instituția de învățământ
-          </Text>
-
-          <Text style={styles.label}>Numele instituției de învățământ</Text>
-          {errors.institutionName ? (
-            <Text style={styles.errorText}>{errors.institutionName}</Text>
-          ) : null}
-          <TextInput
-            style={styles.input}
-            value={institutionName}
-            onChangeText={setInstitutionName}
-            placeholder="19/05/2000"
-          />
-
-          <Text style={styles.label}>Facultatea</Text>
-          {errors.faculty ? (
-            <Text style={styles.errorText}>{errors.faculty}</Text>
-          ) : null}
-          <View style={styles.input}>
-            <RNPickerSelect
-              placeholder={placeholder}
-              items={pickerData["faculty"].options}
-              onValueChange={(value) => setFaculty(value)}
-              value={faculty}
-            />
-          </View>
-
-          <Text style={styles.label}>Anul de studiu</Text>
-          {errors.studyYear ? (
-            <Text style={styles.errorText}>{errors.studyYear}</Text>
-          ) : null}
-          <View style={styles.input}>
-            <RNPickerSelect
-              placeholder={placeholder}
-              items={pickerData["studyYear"].options}
-              onValueChange={(value) => setStudyYear(value)}
-              value={studyYear}
-            />
-          </View>
-
-          <Text style={styles.label}>Specializarea/programul de studiu</Text>
-          {errors.studyProgram ? (
-            <Text style={styles.errorText}>{errors.studyProgram}</Text>
-          ) : null}
-          <View style={styles.input}>
-            <RNPickerSelect
-              placeholder={placeholder}
-              items={pickerData["faculty"].studyProgram[faculty] || []}
-              onValueChange={(value) => setStudyProgram(value)}
-              value={studyProgram}
-            />
-          </View>
+          {renderPicker("Programul de studiu", "studyProgram", pickerData.study_program.options)}
+          {renderPicker("Facultatea", "faculty", pickerData.faculty.options)}
+          {renderPicker("Taxă de studii", "tuition", pickerData.tuition.options)}
+          {renderPicker("Anul de studiu", "studyYear", pickerData.studyYear.options)}
+          {renderPicker("Specializarea", "specialization", pickerData.faculty.specialization[formData.faculty] || [])}
 
           <Text style={styles.input_description}>Informații despre cămin</Text>
-          <Text style={styles.label}>Opțiunea preferată pentru cămin</Text>
-          {errors.dormPreference ? (
-            <Text style={styles.errorText}>{errors.dormPreference}</Text>
-          ) : null}
-          <View style={styles.input}>
-            <RNPickerSelect
-              placeholder={placeholder}
-              items={pickerData["dormPreference"].options}
-              onValueChange={(value) => setDormPreference(value)}
-              value={dormPreference}
-            />
-          </View>
 
-          <Text style={styles.label}>Tipul de cameră preferat</Text>
-          {errors.roomPreference ? (
-            <Text style={styles.errorText}>{errors.roomPreference}</Text>
-          ) : null}
-          <View style={styles.input}>
-            <RNPickerSelect
-              placeholder={placeholder}
-              items={pickerData["roomPreference"].options}
-              onValueChange={(value) => setRoomPreference(value)}
-              value={roomPreference}
-            />
-          </View>
+          {renderPicker("Opțiunea preferată pentru cămin", "dormPreference", pickerData.dormPreference.options)}
+          {renderPicker("Tipul de cameră preferat", "roomPreference", pickerData.roomPreference.options)}
 
           <Text style={styles.input_description}>Informații de urgență</Text>
-          <Text style={styles.label}>
-            Numele unei persoane de contact în caz de urgență
-          </Text>
-          {errors.emergencyContactName ? (
-            <Text style={styles.errorText}>{errors.emergencyContactName}</Text>
-          ) : null}
-          <TextInput
-            style={styles.input}
-            value={emergencyContactName}
-            onChangeText={setEmergencyContactName}
-            placeholder="19/05/2000"
-          />
 
-          <Text style={styles.label}>
-            Număr de telefon al persoanei de contact
-          </Text>
-          {errors.emergencyContactPhone ? (
-            <Text style={styles.errorText}>{errors.emergencyContactPhone}</Text>
-          ) : null}
-          <TextInput
-            style={styles.input}
-            value={emergencyContactPhone}
-            onChangeText={setEmergencyContactPhone}
-            placeholder="19/05/2000"
-          />
+          {renderInput("Numele unei persoane de contact în caz de urgență", "emergencyContactName")}
+          {renderInput("Număr de telefon al persoanei de contact", "emergencyContactPhone")}
+
           <Button title="Register" onPress={handleSubmit} />
         </View>
+        <Modal visible={modalVisible} animationType="fade" transparent={true} onRequestClose={() => setModalVisible(false)}>
+          <Pressable
+            onPress={() => setModalVisible(false)}
+            style={{ flex: 1, justifyContent: "center", alignItems: "center", backgroundColor: "rgba(0, 0, 0, 0.5)" }}
+          >
+            <View style={{ width: "20%", backgroundColor: "white", padding: 20, borderRadius: 10, alignItems: "center" }}>
+              <Text style={{ color: "#00E200", fontSize: 18, fontWeight: "bold", marginBottom: "10%" }}>Inregistrare cu succes!</Text>
+              <Button title="Inchide" onPress={() => setModalVisible(false)} />
+              {/* Adaugă aici conținutul modalei */}
+            </View>
+          </Pressable>
+        </Modal>
       </ScrollView>
     </KeyboardAvoidingView>
   );

@@ -1,13 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { StatusBar } from "expo-status-bar";
-import {
-  Alert,
-  BackHandler,
-  ActivityIndicator,
-  View,
-  Platform,
-  Pressable,
-} from "react-native";
+import { Alert, BackHandler, ActivityIndicator, View, Platform, Pressable } from "react-native";
 import { NavigationContainer } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import Login from "./screens/login";
@@ -89,10 +82,7 @@ export default function App() {
     // Încă se verifică sesiunea, puteți afișa, de exemplu, un ecran de încărcare
     return (
       <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
-        <ActivityIndicator
-          size={Platform.OS == "web" ? 80 : "large"}
-          color="#00BFFF"
-        />
+        <ActivityIndicator size={Platform.OS == "web" ? 80 : "large"} color="#00BFFF" />
       </View>
     );
   }
@@ -103,25 +93,9 @@ export default function App() {
     <NavigationContainer>
       <StatusBar style="auto" />
 
-      <Stack.Navigator
-        initialRouteName={
-          isLogged === true
-            ? role === "admin"
-              ? "homeAdmin"
-              : "home"
-            : "login"
-        }
-      >
-        <Stack.Screen
-          name="login"
-          component={Login}
-          options={{ headerShown: false }}
-        />
-        <Stack.Screen
-          name="register"
-          component={Register}
-          options={{ headerTitle: "Inregistrare", headerTitleAlign: "center" }}
-        />
+      <Stack.Navigator initialRouteName={isLogged === true ? (role === "admin" ? "homeAdmin" : "home") : "login"}>
+        <Stack.Screen name="login" component={Login} options={{ headerShown: false }} />
+        <Stack.Screen name="register" component={Register} options={{ headerTitle: "Inregistrare", headerTitleAlign: "center" }} />
         <Stack.Screen
           name="forgotPassword"
           component={ForgotPassword}
@@ -148,21 +122,9 @@ export default function App() {
             headerShown: false,
           }}
         />
-        <Stack.Screen
-          name="myRoom"
-          component={MyRoom}
-          options={{ headerTitle: "Camera 4" }}
-        />
-        <Stack.Screen
-          name="settings"
-          component={Settings}
-          options={{ headerTitle: "Setari" }}
-        />
-        <Stack.Screen
-          name="ComplainScreen"
-          component={ComplainScreen}
-          options={{ headerTitle: "Lista cu plangeri" }}
-        />
+        <Stack.Screen name="myRoom" component={MyRoom} options={{ headerTitle: "Camera 4" }} />
+        <Stack.Screen name="settings" component={Settings} options={{ headerTitle: "Setari" }} />
+        <Stack.Screen name="ComplainScreen" component={ComplainScreen} options={{ headerTitle: "Lista cu plangeri" }} />
       </Stack.Navigator>
     </NavigationContainer>
   );

@@ -1,15 +1,5 @@
 import React, { useState, useEffect } from "react";
-import {
-  View,
-  StyleSheet,
-  Text,
-  FlatList,
-  TouchableOpacity,
-  ScrollView,
-  ActivityIndicator,
-  Platform,
-  Pressable,
-} from "react-native";
+import { View, StyleSheet, Text, FlatList, TouchableOpacity, ScrollView, ActivityIndicator, Platform, Pressable } from "react-native";
 import Ionicons from "@expo/vector-icons/Ionicons";
 import { Entypo } from "@expo/vector-icons";
 import { AntDesign } from "@expo/vector-icons";
@@ -51,10 +41,7 @@ export default function HomeAdminTab({ navigation, route }) {
     // Încă se verifică sesiunea, puteți afișa, de exemplu, un ecran de încărcare
     return (
       <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
-        <ActivityIndicator
-          size={Platform.OS == "web" ? 80 : "large"}
-          color="#00BFFF"
-        />
+        <ActivityIndicator size={Platform.OS == "web" ? 80 : "large"} color="#00BFFF" />
       </View>
     );
   }

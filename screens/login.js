@@ -1,18 +1,7 @@
 import React from "react";
 import { useState } from "react";
 import axios from "axios";
-import {
-  View,
-  Image,
-  Text,
-  TextInput,
-  Button,
-  Keyboard,
-  KeyboardAvoidingView,
-  Platform,
-  Pressable,
-  StyleSheet,
-} from "react-native";
+import { View, Image, Text, TextInput, Button, Keyboard, KeyboardAvoidingView, Platform, Pressable, StyleSheet } from "react-native";
 const logo = require("../assets/logo-upg-2.png");
 
 export default function Login({ navigation }) {
@@ -45,9 +34,7 @@ export default function Login({ navigation }) {
     };
 
     axios
-      .post(`http://${ip}:3000/login`, credentials, {
-        withCredentials: true,
-      })
+      .post(`http://${ip}:3000/login`, credentials, { withCredentials: true })
       .then((response) => {
         if (response.status === 200) {
           console.log("Autentificare reușită!");
@@ -55,9 +42,7 @@ export default function Login({ navigation }) {
           setPassword("");
           setErrors({});
           const userData = response.data.userData;
-          userData.role === "admin"
-            ? navigation.navigate("homeAdmin", { userData })
-            : navigation.navigate("home", { userData });
+          userData.role === "admin" ? navigation.navigate("homeAdmin", { userData }) : navigation.navigate("home", { userData });
           // Executați acțiuni corespunzătoare pentru autentificarea reușită
         } else {
           console.log("Autentificare eșuată!");
@@ -72,34 +57,15 @@ export default function Login({ navigation }) {
   // const loggedIn = req.session.loggedIn;
 
   return (
-    <KeyboardAvoidingView
-      behavior="padding"
-      keyboardVerticalOffset={-160}
-      style={styles.container}
-    >
+    <KeyboardAvoidingView behavior="padding" keyboardVerticalOffset={-160} style={styles.container}>
       <View style={styles.form}>
         <Image style={styles.logo} source={logo} resizeMode="contain" />
         <Text style={styles.label}>Email</Text>
-        <TextInput
-          style={styles.input}
-          value={email}
-          onChangeText={setEmail}
-          placeholder="Enter your email"
-        />
-        {errors.email ? (
-          <Text style={styles.errorText}>{errors.email}</Text>
-        ) : null}
+        <TextInput style={styles.input} value={email} onChangeText={setEmail} placeholder="Enter your email" />
+        {errors.email ? <Text style={styles.errorText}>{errors.email}</Text> : null}
         <Text style={styles.label}>Password</Text>
-        <TextInput
-          style={styles.input}
-          value={password}
-          onChangeText={setPassword}
-          placeholder="Enter your password"
-          secureTextEntry
-        />
-        {errors.password ? (
-          <Text style={styles.errorText}>{errors.password}</Text>
-        ) : null}
+        <TextInput style={styles.input} value={password} onChangeText={setPassword} placeholder="Enter your password" secureTextEntry />
+        {errors.password ? <Text style={styles.errorText}>{errors.password}</Text> : null}
         <Button title="Login" onPress={handleSubmit} />
         <View
           style={{
