@@ -27,6 +27,8 @@ const indexRoute = require("./routes/index");
 const checkSession = require("./controllers/checkSession");
 const getAdminData = require("./routes/getAdminData");
 const getSessionData = require("./controllers/getSessionData");
+const register_request = require("./routes/register-request");
+const getRegister_requests = require("./routes/getRegister-requests");
 
 app.use(bodyParser.json());
 app.use(cookieParser());
@@ -61,6 +63,8 @@ app.use("/", indexRoute);
 app.use("/checkSession", checkSession);
 app.use("/getAdminData", getAdminData);
 app.use("/getSessionData", getSessionData);
+app.use("/register-request", register_request);
+app.use("/getRegister-requests", getRegister_requests);
 
 app.listen(PORT, IP_ADDRESS, () => {
   console.log(`Serverul este ascultat la adresa: http://${IP_ADDRESS}:${PORT}`);
