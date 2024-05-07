@@ -3,20 +3,21 @@ require("dotenv").config();
 const express = require("express");
 const session = require("express-session");
 const bodyParser = require("body-parser");
-const cookieParser = require("cookie-parser");
+// const cookieParser = require("cookie-parser");
 const cors = require("cors");
 
 const app = express();
 const PORT = 3000;
-const IP_ADDRESS = "localhost";
+const IP_ADDRESS = process.env.URL;
 
 app.use(
   session({
-    secret: "secret-key",
+    secret: "secretkeymiauham",
     resave: false,
     saveUninitialized: false,
     cookie: {
       maxAge: 12 * 60 * 60 * 1000,
+      httpOnly: false,
       secure: false, // Asigură-te că este setat pe true pentru conexiunile HTTPS
     },
   })
@@ -29,9 +30,13 @@ const getAdminData = require("./routes/getAdminData");
 const getSessionData = require("./controllers/getSessionData");
 const register_request = require("./routes/register-request");
 const getRegister_requests = require("./routes/getRegister-requests");
+const acceptRegisterRequest = require("./routes/acceptRegisterRequest");
+const rejectRegisterRequest = require("./routes/rejectRegisterRequest");
+const addAnnounce = require("./routes/addAnnounce");
+const getAnnounces = require("./routes/getAnnounces");
 
 app.use(bodyParser.json());
-app.use(cookieParser());
+// app.use(cookieParser());
 
 app.use(
   cors({
@@ -41,6 +46,8 @@ app.use(
       "http://localhost:3000",
       "http://192.168.0.101:19006",
       "http://192.168.0.101:3000",
+      "http://192.168.0.87:3000",
+      "http://95.77.125.103:3000",
       "exp://192.168.0.101:8081",
       "http://192.168.0.101:8081",
       "http://192.168.0.102:59782",
@@ -65,7 +72,11 @@ app.use("/getAdminData", getAdminData);
 app.use("/getSessionData", getSessionData);
 app.use("/register-request", register_request);
 app.use("/getRegister-requests", getRegister_requests);
+app.use("/acceptRegisterRequest", acceptRegisterRequest);
+app.use("/rejectRegisterRequest", rejectRegisterRequest);
+app.use("/addAnnounce", addAnnounce);
+app.use("/getAnnounces", getAnnounces);
 
-app.listen(PORT, IP_ADDRESS, () => {
+app.listen(PORT, "0.0.0.0", () => {
   console.log(`Serverul este ascultat la adresa: http://${IP_ADDRESS}:${PORT}`);
 });
