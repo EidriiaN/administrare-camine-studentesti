@@ -8,9 +8,9 @@ const isWeb = Platform.OS === "web";
 const Container = isWeb ? ScrollView : View;
 
 export default function HomeAdminTab({ navigation, route }) {
-  const ip = "localhost";
   const [isLoading, setIsLoding] = useState(true);
   const [data, setData] = useState({});
+  const ip = Platform.OS === "web" ? process.env.EXPO_PUBLIC_LOCAL : process.env.EXPO_PUBLIC_URL;
 
   useEffect(() => {
     const checkIfIsLogged = async () => {
@@ -24,7 +24,6 @@ export default function HomeAdminTab({ navigation, route }) {
 
         if (response.status === 200) {
           setIsLoding(false);
-          console.log(response.data, "raspunsul cica");
           setData(response.data);
         }
       } catch (error) {
@@ -49,7 +48,7 @@ export default function HomeAdminTab({ navigation, route }) {
   return (
     <Container style={styles.container}>
       <View style={styles.welcome}>
-        <Text style={{ fontSize: 22 }}>Bine ai venit, {data.firstName} 👋</Text>
+        <Text style={{ fontSize: 22 }}>Bine ai venit, {data.lastName} 👋</Text>
       </View>
       {/* <View style={styles.top}>
         <Pressable

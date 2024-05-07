@@ -1,14 +1,16 @@
+import { URL } from "../constans";
 import React from "react";
+import { EXPO_PUBLIC_URL } from "@env";
 import { useState } from "react";
 import axios from "axios";
 import { View, Image, Text, TextInput, Button, Keyboard, KeyboardAvoidingView, Platform, Pressable, StyleSheet } from "react-native";
 const logo = require("../assets/logo-upg-2.png");
 
 export default function Login({ navigation }) {
-  const ip = "localhost";
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [errors, setErrors] = useState({});
+  const ip = Platform.OS === "web" ? process.env.EXPO_PUBLIC_LOCAL : process.env.EXPO_PUBLIC_URL;
 
   const validateForm = () => {
     let errors = {};

@@ -1,12 +1,13 @@
 import React, { useState, useEffect } from "react";
 import { View, StyleSheet, Text, Platform, TouchableOpacity, Pressable, Button, FlatList, ActivityIndicator } from "react-native";
 import axios from "axios";
+import moment from "moment";
 const isWeb = Platform.OS === "web";
 
 export default function RequestsAdminTab({ navigation }) {
   const [data, setData] = useState({});
   const [isLoading, setIsLoding] = useState(true);
-  const ip = "localhost";
+  const ip = Platform.OS === "web" ? process.env.EXPO_PUBLIC_LOCAL : process.env.EXPO_PUBLIC_URL;
 
   useEffect(() => {
     const checkRequestsAccounts = async () => {
@@ -33,7 +34,6 @@ export default function RequestsAdminTab({ navigation }) {
   }, []);
 
   if (isLoading) {
-    // Încă se verifică sesiunea, puteți afișa, de exemplu, un ecran de încărcare
     return (
       <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
         <ActivityIndicator size={Platform.OS == "web" ? 80 : "large"} color="#00BFFF" />
@@ -42,6 +42,7 @@ export default function RequestsAdminTab({ navigation }) {
   }
 
   const renderItem = ({ item, index }) => {
+    const formattedDate = moment(item.register_date).format("DD:MM:YYYY");
     return (
       <View style={{ margin: "1%" }}>
         <TouchableOpacity
@@ -55,21 +56,29 @@ export default function RequestsAdminTab({ navigation }) {
             padding: 10,
             backgroundColor: "white",
           }}
+          onPress={() => {
+            navigation.navigate("RequestsAccountScreen", { item });
+          }}
         >
           <View style={{ flexDirection: "column" }}>
             <Text style={{ fontSize: 19 }}>
               {item.name} {item.surname}
             </Text>
             <Text style={{ fontSize: 18 }}>{item.studyProgram}</Text>
-            {item.status === true ? (
-              <Text style={{ fontSize: 15, color: "#00E200" }}>rezolvat</Text>
-            ) : (
-              <Text style={{ fontSize: 15, color: "#FAD800" }}>in asteptare</Text>
-            )}
-            <Text style={{ fontSize: 13 }}>{item.status}</Text>
           </View>
-          <View style={{ flexDirection: "row", alignItems: "center" }}>
-            <Text style={{ fontSize: 15 }}>{item.date}</Text>
+          <View style={{ flexDirection: "column" }}>
+            <Text style={{ fontSize: 18 }}>{item.faculty}</Text>
+            <Text style={{ fontSize: 18 }}>{item.specialization}</Text>
+          </View>
+          <View style={{ flexDirection: "column", alignItems: "center" }}>
+            <Text style={{ fontSize: 15 }}>{formattedDate}</Text>
+            {item.status === "pending" ? (
+              <Text style={{ fontSize: 15, color: "#FAD800" }}>in asteptare</Text>
+            ) : item.status === "approved" ? (
+              <Text style={{ fontSize: 15, color: "#00E200" }}>aprobat</Text>
+            ) : (
+              <Text style={{ fontSize: 15, color: "#FF2A04" }}>respins</Text>
+            )}
           </View>
         </TouchableOpacity>
       </View>
@@ -78,7 +87,7 @@ export default function RequestsAdminTab({ navigation }) {
   return (
     <View style={styles.container}>
       <View style={styles.contentContainer}>
-        <Text>Inregistrari in asteptare</Text>
+        <Text style={{ alignSelf: "center", fontSize: 20, marginBottom: "5%" }}>Inregistrari in asteptare</Text>
         <FlatList
           data={data} // Datele listei
           renderItem={renderItem} // Funcția pentru a randează fiecare element

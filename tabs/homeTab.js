@@ -1,111 +1,43 @@
-import React, { useState } from "react";
-import {
-  View,
-  StyleSheet,
-  Text,
-  FlatList,
-  TouchableOpacity,
-  ScrollView,
-  Platform,
-  Pressable,
-} from "react-native";
+import React, { useState, useEffect } from "react";
+import { View, StyleSheet, Text, FlatList, TouchableOpacity, ScrollView, Platform, Pressable, ActivityIndicator } from "react-native";
 import Ionicons from "@expo/vector-icons/Ionicons";
 import { Entypo } from "@expo/vector-icons";
 import { AntDesign } from "@expo/vector-icons";
+import axios from "axios";
+import moment from "moment";
 const isWeb = Platform.OS === "web";
 const Container = isWeb ? ScrollView : View;
+const ip = Platform.OS === "web" ? process.env.EXPO_PUBLIC_LOCAL : process.env.EXPO_PUBLIC_URL;
 
 export default function HomeTab({ navigation }) {
   const [dropdownIndex, setDropdownIndex] = useState(null);
-  // Definirea datelor pentru lista
-  const data = [
-    {
-      id: "1",
-      title: "Deratizare",
-      date: "10.05.2024",
-      message:
-        "Vine deratizarea - Va rugam sa parasiti caminul pana la ora 10:00 pentru efectuarea lucrarii.",
-    },
-    {
-      id: "2",
-      title: "Probleme cu zgomotul",
-      date: "10.05.2024",
-      message:
-        "Se semnaleaza probleme cu zgomotul in camin. Va rugam sa fiti mai atenti la nivelul de zgomot produs.",
-    },
-    {
-      id: "3",
-      title: "Lucrari de reparatie",
-      date: "10.05.2024",
-      message:
-        "Incep lucrari de reparatie la etajul 3. Va rugam sa evitati zona respectiva pentru a nu perturba lucratorii.",
-    },
-    {
-      id: "4",
-      title: "Se inchide furnizarea apei",
-      date: "10.05.2024",
-      message:
-        "Va anuntam ca furnizarea apei va fi oprita temporar pentru efectuarea unor lucrari de mentenanta. Ne cerem scuze pentru inconvenient.",
-    },
-    {
-      id: "5",
-      title: "Vin mascatii",
-      date: "10.05.2024",
-      message:
-        "Atentie! Echipele de securitate vor efectua o inspectie in camin. Va rugam sa fiti prezenti in camere.",
-    },
-    {
-      id: "6",
-      title: "Anunt important",
-      date: "10.05.2024",
-      message:
-        "Va rugam sa respectati regulile de curatenie in camin si sa aruncati deseurile la cosurile special amenajate.",
-    },
-    {
-      id: "7",
-      title: "Vin mascatii",
-      date: "10.05.2024",
-      message:
-        "Echipele de securitate vor face o verificare a incaperilor incepand cu ora 14:00. Va rugam sa va asigurati ca accesul in camere este permis.",
-    },
-    {
-      id: "8",
-      title: "Anunt important",
-      date: "10.05.2024",
-      message:
-        "Va reamintim ca este interzis fumatul in incinta caminului. Va rugam sa respectati aceasta regula pentru confortul tuturor locatarilor.",
-    },
-    {
-      id: "9",
-      title: "Anunt important",
-      date: "10.05.2024",
-      message:
-        "Reparatiile la reteaua electrica vor incepe in curand. Va rugam sa inchideti toate aparatele electrice inainte de inceperea lucrarilor.",
-    },
-    {
-      id: "10",
-      title: "Anunt important",
-      date: "10.05.2024",
-      message:
-        "Va rugam sa aveti grija de cheile de la camera si sa le pastrati in siguranta. Pierderea cheilor poate duce la costuri suplimentare pentru inlocuire.",
-    },
-    {
-      id: "11",
-      title: "Anunt important",
-      date: "10.05.2024",
-      message:
-        "Va anuntam ca accesul in camin va fi restrictionat pentru mentenanta la ascensoare in data de 12.05.2024. Va rugam sa planificati in avans.",
-    },
-  ];
+  const [loading, setLoading] = useState(false);
+  const [announcesData, setAnnouncesData] = useState();
 
-  // Funcție pentru a randează fiecare element din listă
+  useEffect(() => {
+    const getAnnouncesData = async () => {
+      setLoading(true);
+      try {
+        const response = await axios.get(`http://${ip}:3000/getAnnounces`, {
+          withCredentials: true,
+        });
+
+        setAnnouncesData(response.data);
+      } catch (error) {
+        console.error("Eroare la trimiterea anunțului:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+    getAnnouncesData();
+  }, []);
+
   const renderItem = ({ item, index }) => {
+    const formattedDate = moment(item.publication_date).format("DD:MM:YYYY");
     return (
       <View style={{ margin: "1%" }}>
         <TouchableOpacity
-          onPress={() =>
-            setDropdownIndex(dropdownIndex === index ? null : index)
-          }
+          onPress={() => setDropdownIndex(dropdownIndex === index ? null : index)}
           style={{
             flexDirection: "row",
             alignItems: "center",
@@ -118,13 +50,10 @@ export default function HomeTab({ navigation }) {
           }}
         >
           <Text style={{ fontSize: 20 }}>{item.title}</Text>
-          <View style={{ flexDirection: "row", gap: 3, alignItems: "center" }}>
-            <Text style={{ fontSize: 15 }}>{item.date}</Text>
-            <AntDesign
-              name={dropdownIndex === index ? "caretup" : "caretdown"}
-              size={14}
-              color={dropdownIndex === index ? "black" : "gray"}
-            />
+          <View style={{ flexDirection: "row", gap: 5, alignItems: "center", justifyContent: "center" }}>
+            <Text style={{ fontSize: 16, marginLeft: "auto" }}>{item.author}</Text>
+            <Text style={{ fontSize: 16 }}>{formattedDate}</Text>
+            <AntDesign name={dropdownIndex === index ? "caretup" : "caretdown"} size={14} color={dropdownIndex === index ? "black" : "gray"} />
           </View>
         </TouchableOpacity>
         {dropdownIndex === index && (
@@ -145,14 +74,20 @@ export default function HomeTab({ navigation }) {
               elevation: 5,
             }}
           >
-            <Text style={{ textAlign: "left", fontSize: 20 }}>
-              {item.message}
-            </Text>
+            <Text style={{ textAlign: "left", fontSize: 20 }}>{item.message}</Text>
           </View>
         )}
       </View>
     );
   };
+
+  if (loading) {
+    return (
+      <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
+        <ActivityIndicator size={Platform.OS == "web" ? 80 : "large"} color="#00BFFF" />
+      </View>
+    );
+  }
 
   return (
     <Container style={styles.container}>
@@ -174,31 +109,29 @@ export default function HomeTab({ navigation }) {
           <Text>100/200 camere</Text>
         </View>
       </View>
-      <View style={{ flex: 2 }}>
-        <Text
-          style={{
-            alignSelf: "flex-start",
-            fontSize: 28,
-            marginStart: isWeb ? null : "3%",
-          }}
-        >
-          Anunturi importante!
-        </Text>
-        <FlatList
-          data={data} // Datele listei
-          renderItem={renderItem} // Funcția pentru a randează fiecare element
-          keyExtractor={(item) => item.id} // Extrage un identificator unic pentru fiecare element
-          style={styles.flatListContainer} // Adaugarea stilurilor la FlatList direct
-          initialNumToRender={2}
-        />
-      </View>
+
+      <Text
+        style={{
+          alignSelf: "flex-start",
+          fontSize: 28,
+          marginStart: isWeb ? null : "3%",
+        }}
+      >
+        Anunturi importante!
+      </Text>
+      <FlatList
+        data={announcesData} // Datele listei
+        renderItem={renderItem} // Funcția pentru a randează fiecare element
+        keyExtractor={(item) => item.id} // Extrage un identificator unic pentru fiecare element
+        style={styles.flatListContainer} // Adaugarea stilurilor la FlatList direct
+        initialNumToRender={2}
+      />
     </Container>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
     backgroundColor: "#f5f5f5",
     paddingStart: isWeb ? "15%" : null,
     paddingEnd: isWeb ? "15%" : null,
@@ -213,15 +146,14 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     justifyContent: "space-evenly",
     alignItems: "center",
-    flex: 0.5,
     marginTop: 10,
   },
   top_containers: {
     justifyContent: "center",
     alignItems: "center",
     backgroundColor: "white",
-    height: "75%",
-    width: "40%",
+    height: 100,
+    width: "30%",
     borderRadius: 10,
     shadowColor: "black",
     shadowOffset: {
@@ -236,5 +168,6 @@ const styles = StyleSheet.create({
     borderRadius: 6,
     marginTop: "3%",
     margin: "2%",
+    height: 370,
   },
 });

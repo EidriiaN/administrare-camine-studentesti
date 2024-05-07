@@ -1,3 +1,4 @@
+import { URL } from "./constans";
 import React, { useEffect, useState } from "react";
 import { StatusBar } from "expo-status-bar";
 import { Alert, BackHandler, ActivityIndicator, View, Platform, Pressable } from "react-native";
@@ -13,14 +14,16 @@ import Register from "./screens/register";
 import ForgotPassword from "./screens/forgotPassword";
 import HomeAdmin from "./screens/homeAdmin";
 import ComplainScreen from "./screens/AdminScreens/complainScreen";
+import RequestsAccountScreen from "./screens/AdminScreens/requestsAccountScreen";
 
 const Stack = createNativeStackNavigator();
 
 export default function App() {
-  const ip = "localhost";
   const [isCheckingSession, setIsCheckingSession] = useState(true);
   const [isLogged, setIsLogged] = useState(false);
   const [role, setRole] = useState("");
+  const ip = Platform.OS === "web" ? process.env.EXPO_PUBLIC_LOCAL : process.env.EXPO_PUBLIC_URL;
+  console.log(ip, "ip app.js");
 
   useEffect(() => {
     const handleBackButton = () => {
@@ -125,6 +128,7 @@ export default function App() {
         <Stack.Screen name="myRoom" component={MyRoom} options={{ headerTitle: "Camera 4" }} />
         <Stack.Screen name="settings" component={Settings} options={{ headerTitle: "Setari" }} />
         <Stack.Screen name="ComplainScreen" component={ComplainScreen} options={{ headerTitle: "Lista cu plangeri" }} />
+        <Stack.Screen name="RequestsAccountScreen" component={RequestsAccountScreen} options={{ headerTitle: "Conturi in Asteptare" }} />
       </Stack.Navigator>
     </NavigationContainer>
   );

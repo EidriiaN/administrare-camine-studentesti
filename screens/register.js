@@ -1,20 +1,7 @@
 import React from "react";
 import { useState } from "react";
 import axios from "axios";
-import {
-  View,
-  Image,
-  Text,
-  TextInput,
-  Button,
-  Modal,
-  TouchableOpacity,
-  KeyboardAvoidingView,
-  Platform,
-  ScrollView,
-  StyleSheet,
-  Pressable,
-} from "react-native";
+import { View, Image, Text, TextInput, Button, Modal, TouchableOpacity, KeyboardAvoidingView, Platform, ScrollView, StyleSheet, Pressable } from "react-native";
 import RNPickerSelect from "react-native-picker-select";
 import DateTimePicker from "react-native-ui-datepicker";
 import dayjs from "dayjs";
@@ -22,7 +9,7 @@ import { render } from "react-dom";
 const logo = require("../assets/logo-upg-2.png");
 
 export default function Register({ navigation }) {
-  const ip = "localhost";
+  const ip = Platform.OS === "web" ? process.env.EXPO_PUBLIC_LOCAL : process.env.EXPO_PUBLIC_URL;
   const [formData, setFormData] = useState({
     name: "",
     surname: "",
@@ -52,6 +39,7 @@ export default function Register({ navigation }) {
     roomPreference: "",
     emergencyContactName: "",
     emergencyContactPhone: "",
+    register_date: new Date(),
   });
   const [showCalendar, setShowCalendar] = useState(false);
   const [errors, setErrors] = useState({});
@@ -98,13 +86,7 @@ export default function Register({ navigation }) {
     <>
       <Text style={styles.label}>{label}</Text>
       {errors[field] && <Text style={styles.errorText}>{errors[field]}</Text>}
-      <TextInput
-        style={styles.input}
-        value={formData[field]}
-        onChangeText={(text) => handleChange(field, text)}
-        keyboardType={keyboardType}
-        inputMode={inputMode}
-      />
+      <TextInput style={styles.input} value={formData[field]} onChangeText={(text) => handleChange(field, text)} keyboardType={keyboardType} inputMode={inputMode} />
     </>
   );
 
@@ -113,12 +95,7 @@ export default function Register({ navigation }) {
       <Text style={styles.label}>{label}</Text>
       {errors[field] && <Text style={styles.errorText}>{errors[field]}</Text>}
       <View style={styles.input}>
-        <RNPickerSelect
-          placeholder={{ label: `Select ${label.toLowerCase()}`, value: "" }}
-          items={options}
-          onValueChange={(value) => handleChange(field, value)}
-          value={formData[field]}
-        />
+        <RNPickerSelect placeholder={{ label: `Select ${label.toLowerCase()}`, value: "" }} items={options} onValueChange={(value) => handleChange(field, value)} value={formData[field]} />
       </View>
     </>
   );
@@ -128,12 +105,7 @@ export default function Register({ navigation }) {
       <Text style={styles.label}>{label}</Text>
       {errors[field] && <Text style={styles.errorText}>{errors[field]}</Text>}
       <TouchableOpacity onPress={() => setShowCalendar(true)}>
-        <TextInput
-          style={styles.input}
-          value={formData[field] ? formData[field].format("YYYY-MM-DD") : ""}
-          placeholder="YYYY-MM-DD"
-          editable={false}
-        />
+        <TextInput style={styles.input} value={formData[field] ? formData[field].format("YYYY-MM-DD") : ""} placeholder="YYYY-MM-DD" editable={false} />
       </TouchableOpacity>
       {showCalendar && (
         <View style={{ backgroundColor: "#f5f5f5" }}>
@@ -170,86 +142,55 @@ export default function Register({ navigation }) {
     faculty: {
       label: "Faculty",
       options: [
-        { label: "INGINERIE MECANICĂ ŞI ELECTRICĂ", value: "ime" },
-        { label: "INGINERIA PETROLULUI ŞI GAZELOR", value: "ipg" },
-        { label: "TEHNOLOGIA PETROLULUI ŞI PETROCHIMIE", value: "ipp" },
-        { label: "LITERE ŞI ŞTIINŢE", value: "ls" },
-        { label: "STIINŢE ECONOMICE", value: "se" },
-        // Add more options as needed
+        { label: "INGINERIE MECANICĂ ŞI ELECTRICĂ", value: "Inginerie Mecanică și Electrică" },
+        { label: "INGINERIA PETROLULUI ŞI GAZELOR", value: "Ingineria Petrolului și Gazelor" },
+        { label: "TEHNOLOGIA PETROLULUI ŞI PETROCHIMIE", value: "Tehnologia Petrolului și Petrochimie" },
+        { label: "LITERE ŞI ŞTIINŢE", value: "Litere și Științe" },
+        { label: "STIINŢE ECONOMICE", value: "Științe Economice" },
       ],
       specialization: {
-        ime: [
-          { label: "Automatică şi Informatică Aplicată", value: "aia" },
-          { label: "Calculatoare", value: "cal" },
-          { label: "Electromecanică", value: "elm" },
-          { label: "Inginerie Economică în Domeniul Mecanic", value: "iedm" },
-          { label: "Utilaje Petroliere și Petrochimice", value: "utp" },
+        "Inginerie Mecanică și Electrică": [
+          { label: "Automatică şi Informatică Aplicată", value: "Automatică şi Informatică Aplicată" },
+          { label: "Calculatoare", value: "Calculatoar" },
+          { label: "Electromecanică", value: "Electromecanică" },
+          { label: "Inginerie Economică în Domeniul Mecanic", value: "Inginerie Economică în Domeniul Mecanic" },
+          { label: "Utilaje Petroliere și Petrochimice", value: "Utilaje Petroliere și Petrochimice" },
           {
             label: "Utilaje pentru Transportul și Depozitarea Hidrocarburilor",
-            value: "utd",
+            value: "Utilaje pentru Transportul și Depozitarea Hidrocarburilor",
           },
         ],
-        ipg: [
-          { label: "INGINERIE DE PETROL SI GAZE - IF", value: "ipgIf" },
-          { label: "INGINERIE DE PETROL SI GAZE – IFR", value: "ipgIfr" },
-          {
-            label: "DISTRIBUȚIA SI DEPOZITAREA HIDROCARBURILOR",
-            value: "ddh",
-          },
-          { label: "GEOLOGIA RESURSELOR PETROLIERE", value: "grp" },
+        "Ingineria Petrolului și Gazelor": [
+          { label: "Inginerie de Petrol si Gaze - IF", value: "Inginerie de Petrol si Gaze - IF" },
+          { label: "Inginerie de Petrol si Gaze - IFR", value: "Inginerie de Petrol si Gaze - IFR" },
+          { label: "Distribuția si Depozitarea Hidrocarburilor", value: "Distribuția si Depozitarea Hidrocarburilor" },
+          { label: "Geologia Resurselor Petroliere", value: "Geologia Resurselor Petroliere" },
         ],
-        ipp: [
-          { label: "Prelucrarea Petrolului și Petrochimie", value: "ppp" },
-          {
-            label: "Petroleum Processing and Petrochemistry (EN)",
-            value: "pppen",
-          },
-          {
-            label: "Controlul şi Securitatea Produselor Alimentare",
-            value: "cspa",
-          },
-          {
-            label: "Ingineria și Protecția Mediului în Industrie",
-            value: "ipmi",
-          },
+        "Tehnologia Petrolului și Petrochimie": [
+          { label: "Prelucrarea Petrolului şi Petrochimie", value: "Prelucrarea Petrolului şi Petrochimie" },
+          { label: "Petroleum Processing and Petrochemistry (EN)", value: "Petroleum Processing and Petrochemistry (EN)" },
+          { label: "Controlul şi Securitatea Produselor Alimentare", value: "Controlul şi Securitatea Produselor Alimentare" },
+          { label: "Ingineria şi Protecția Mediului în Industrie", value: "Ingineria şi Protecția Mediului în Industrie" },
         ],
-        ls: [
-          { label: "Administraţie Publică", value: "ap" },
-          { label: "Asistenţă Managerială şi Administrativă", value: "ama" },
-          { label: "Engleză - Franceză", value: "ef" },
-          { label: "Română - Engleză", value: "re" },
-          { label: "Informatică", value: "info" },
-          { label: "Pedagogie", value: "peda" },
+        "Litere și Științe": [
+          { label: "Administraţie Publică", value: "Administraţie Publică" },
+          { label: "Asistenţă Managerială şi Administrativă", value: "Asistenţă Managerială şi Administrativă" },
+          { label: "Engleză - Franceză", value: "Engleză - Franceză" },
+          { label: "Română - Engleză", value: "Română - Engleză" },
+          { label: "Informatică", value: "Informatică" },
+          { label: "Pedagogie", value: "Pedagogie" },
           {
             label: "Pedagogia Învăţământului Primar şi Preşcolar",
-            value: "pipp",
+            value: "Pedagogia Învăţământului Primar şi Preşcolar",
           },
         ],
-        se: [
-          {
-            label: "Economia Comerțului, Turismului și Serviciilor",
-            value: "ects",
-          },
-          {
-            label: "Merceologie și Managementul Calității",
-            value: "mmc",
-          },
-          {
-            label: "Informatică Economică",
-            value: "ie",
-          },
-          {
-            label: "Contabilitate și Informatică de Gestiune",
-            value: "cig",
-          },
-          {
-            label: "Finanțe și Bănci",
-            value: "fb",
-          },
-          {
-            label: "Management",
-            value: "manag",
-          },
+        "Științe Economice": [
+          { label: "Economia Comerţului, Turismului şi Serviciilor", value: "Economia Comerţului, Turismului şi Serviciilor" },
+          { label: "Merceologie şi Managementul Calităţii", value: "Merceologie şi Managementul Calităţii" },
+          { label: "Informatică Economică", value: "Informatică Economică" },
+          { label: "Contabilitate şi Informatică de Gestiune", value: "Contabilitate şi Informatică de Gestiune" },
+          { label: "Finanţe şi Bănci", value: "Finanţe şi Bănci" },
+          { label: "Management", value: "Management" },
         ],
       },
     },
@@ -346,14 +287,16 @@ export default function Register({ navigation }) {
           <Button title="Register" onPress={handleSubmit} />
         </View>
         <Modal visible={modalVisible} animationType="fade" transparent={true} onRequestClose={() => setModalVisible(false)}>
-          <Pressable
-            onPress={() => setModalVisible(false)}
-            style={{ flex: 1, justifyContent: "center", alignItems: "center", backgroundColor: "rgba(0, 0, 0, 0.5)" }}
-          >
+          <Pressable onPress={() => setModalVisible(false)} style={{ flex: 1, justifyContent: "center", alignItems: "center", backgroundColor: "rgba(0, 0, 0, 0.5)" }}>
             <View style={{ width: "20%", backgroundColor: "white", padding: 20, borderRadius: 10, alignItems: "center" }}>
               <Text style={{ color: "#00E200", fontSize: 18, fontWeight: "bold", marginBottom: "10%" }}>Inregistrare cu succes!</Text>
-              <Button title="Inchide" onPress={() => setModalVisible(false)} />
-              {/* Adaugă aici conținutul modalei */}
+              <Button
+                title="Inchide"
+                onPress={() => {
+                  setModalVisible(false);
+                  navigation.replace("login");
+                }}
+              />
             </View>
           </Pressable>
         </Modal>
