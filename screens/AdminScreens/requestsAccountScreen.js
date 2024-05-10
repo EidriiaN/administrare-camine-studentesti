@@ -1,7 +1,9 @@
 import React, { useState } from "react";
-import { View, StyleSheet, Text, TextInput, Button, KeyboardAvoidingView, Platform, Modal, Pressable } from "react-native";
+import { View, StyleSheet, Text, ScrollView, Button, KeyboardAvoidingView, Platform, Modal, Pressable } from "react-native";
 import axios from "axios";
 import moment from "moment";
+const isWeb = Platform.OS === "web";
+const Container = isWeb ? View : ScrollView;
 
 export default function RequestsAccountScreen({ route, navigation }) {
   const { item } = route.params;
@@ -41,7 +43,7 @@ export default function RequestsAccountScreen({ route, navigation }) {
   };
 
   return (
-    <View style={styles.container}>
+    <Container style={styles.container}>
       <View style={styles.contentContainer}>
         <Text style={styles.title}>Studentul așteaptă aprobarea</Text>
 
@@ -95,7 +97,10 @@ export default function RequestsAccountScreen({ route, navigation }) {
 
             <View style={styles.section}>
               <Text style={styles.sectionContainerTitle}>Alte Informații:</Text>
-              <Text>Status: {item.status === true ? <Text style={{ color: "#00E200" }}>rezolvat</Text> : <Text style={{ color: "#FAD800" }}>in așteptare</Text>}</Text>
+              <Text>
+                Status:{" "}
+                {item.status === true ? <Text style={{ color: "#00E200" }}>rezolvat</Text> : <Text style={{ color: "#FAD800" }}>in așteptare</Text>}
+              </Text>
               <Text style={styles.label}>Data înregistrării: {formattedDate}</Text>
             </View>
           </View>
@@ -107,7 +112,10 @@ export default function RequestsAccountScreen({ route, navigation }) {
       </View>
 
       <Modal visible={modalVisible} animationType="fade" transparent={true} onRequestClose={() => setModalVisible(false)}>
-        <Pressable onPress={() => setModalVisible(false)} style={{ flex: 1, justifyContent: "center", alignItems: "center", backgroundColor: "rgba(0, 0, 0, 0.5)" }}>
+        <Pressable
+          onPress={() => setModalVisible(false)}
+          style={{ flex: 1, justifyContent: "center", alignItems: "center", backgroundColor: "rgba(0, 0, 0, 0.5)" }}
+        >
           <View style={{ width: "20%", backgroundColor: "white", padding: 20, borderRadius: 10, alignItems: "center" }}>
             <Text style={{ color: "#00E200", fontSize: 18, fontWeight: "bold", marginBottom: "10%" }}>Succes!</Text>
             <Button
@@ -120,11 +128,9 @@ export default function RequestsAccountScreen({ route, navigation }) {
           </View>
         </Pressable>
       </Modal>
-    </View>
+    </Container>
   );
 }
-
-const isWeb = Platform.OS === "web";
 
 const styles = StyleSheet.create({
   container: {

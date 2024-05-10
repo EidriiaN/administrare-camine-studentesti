@@ -43,13 +43,12 @@ export default function RequestsAdminTab({ navigation }) {
 
   const renderItem = ({ item, index }) => {
     const formattedDate = moment(item.register_date).format("DD:MM:YYYY");
-    return (
+
+    return isWeb ? (
       <View style={{ margin: "1%" }}>
         <TouchableOpacity
           style={{
             flexDirection: "row",
-            alignItems: "center",
-            justifyContent: "space-between",
             borderRadius: 8,
             borderStyle: "solid",
             borderWidth: 0.8,
@@ -60,27 +59,66 @@ export default function RequestsAdminTab({ navigation }) {
             navigation.navigate("RequestsAccountScreen", { item });
           }}
         >
-          <View style={{ flexDirection: "column" }}>
-            <Text style={{ fontSize: 19 }}>
+          <View style={{ width: "40%" }}>
+            <Text style={{ fontSize: 16 }}>
               {item.name} {item.surname}
             </Text>
-            <Text style={{ fontSize: 18 }}>{item.studyProgram}</Text>
+            <Text style={{ fontSize: 15 }}>{item.studyProgram}</Text>
           </View>
-          <View style={{ flexDirection: "column" }}>
-            <Text style={{ fontSize: 18 }}>{item.faculty}</Text>
-            <Text style={{ fontSize: 18 }}>{item.specialization}</Text>
+          <View style={{ width: "40%" }}>
+            <Text style={{ fontSize: 16 }}>{item.faculty}</Text>
+            <Text style={{ fontSize: 16 }}>{item.specialization}</Text>
           </View>
-          <View style={{ flexDirection: "column", alignItems: "center" }}>
-            <Text style={{ fontSize: 15 }}>{formattedDate}</Text>
+          <View style={{ width: "20%", alignItems: "flex-end" }}>
+            <Text style={{ fontSize: 14 }}>{formattedDate}</Text>
             {item.status === "pending" ? (
-              <Text style={{ fontSize: 15, color: "#FAD800" }}>in asteptare</Text>
+              <Text style={{ fontSize: 14, color: "#FAD800" }}>in asteptare</Text>
             ) : item.status === "approved" ? (
-              <Text style={{ fontSize: 15, color: "#00E200" }}>aprobat</Text>
+              <Text style={{ fontSize: 14, color: "#00E200" }}>aprobat</Text>
             ) : (
-              <Text style={{ fontSize: 15, color: "#FF2A04" }}>respins</Text>
+              <Text style={{ fontSize: 14, color: "#FF2A04" }}>respins</Text>
             )}
           </View>
         </TouchableOpacity>
+      </View>
+    ) : (
+      <View>
+        <View style={{ margin: "1%" }}>
+          <TouchableOpacity
+            style={{
+              flexDirection: "row",
+              justifyContent: "space-between",
+              borderRadius: 8,
+              borderStyle: "solid",
+              borderWidth: 0.8,
+              padding: 10,
+              backgroundColor: "white",
+            }}
+            onPress={() => {
+              navigation.navigate("RequestsAccountScreen", { item });
+            }}
+          >
+            <View>
+              <Text style={{ fontSize: 16 }}>
+                {item.name} {item.surname}
+              </Text>
+              <Text style={{ fontSize: 15 }}>{item.studyProgram}</Text>
+
+              <Text style={{ fontSize: 16 }}>{item.faculty}</Text>
+              <Text style={{ fontSize: 16 }}>{item.specialization}</Text>
+            </View>
+            <View style={{ justifyContent: "center" }}>
+              <Text style={{ fontSize: 14 }}>{formattedDate}</Text>
+              {item.status === "pending" ? (
+                <Text style={{ fontSize: 14, color: "#FAD800" }}>in asteptare</Text>
+              ) : item.status === "approved" ? (
+                <Text style={{ fontSize: 14, color: "#00E200" }}>aprobat</Text>
+              ) : (
+                <Text style={{ fontSize: 14, color: "#FF2A04" }}>respins</Text>
+              )}
+            </View>
+          </TouchableOpacity>
+        </View>
       </View>
     );
   };
@@ -119,7 +157,7 @@ const styles = StyleSheet.create({
     shadowRadius: 4,
     elevation: 5,
     padding: isWeb ? "1%" : "3%",
-    width: isWeb ? 700 : null,
+    width: isWeb ? 700 : "100%",
   },
   sortContainer: {
     alignSelf: "center",

@@ -1,11 +1,24 @@
 import React from "react";
 import { useState } from "react";
 import axios from "axios";
-import { View, Image, Text, TextInput, Button, Modal, TouchableOpacity, KeyboardAvoidingView, Platform, ScrollView, StyleSheet, Pressable } from "react-native";
+import {
+  View,
+  Image,
+  Text,
+  TextInput,
+  Button,
+  Modal,
+  TouchableOpacity,
+  KeyboardAvoidingView,
+  Platform,
+  ScrollView,
+  StyleSheet,
+  Pressable,
+} from "react-native";
 import RNPickerSelect from "react-native-picker-select";
 import DateTimePicker from "react-native-ui-datepicker";
 import dayjs from "dayjs";
-import { render } from "react-dom";
+
 const logo = require("../assets/logo-upg-2.png");
 
 export default function Register({ navigation }) {
@@ -86,7 +99,13 @@ export default function Register({ navigation }) {
     <>
       <Text style={styles.label}>{label}</Text>
       {errors[field] && <Text style={styles.errorText}>{errors[field]}</Text>}
-      <TextInput style={styles.input} value={formData[field]} onChangeText={(text) => handleChange(field, text)} keyboardType={keyboardType} inputMode={inputMode} />
+      <TextInput
+        style={styles.input}
+        value={formData[field]}
+        onChangeText={(text) => handleChange(field, text)}
+        keyboardType={keyboardType}
+        inputMode={inputMode}
+      />
     </>
   );
 
@@ -95,7 +114,12 @@ export default function Register({ navigation }) {
       <Text style={styles.label}>{label}</Text>
       {errors[field] && <Text style={styles.errorText}>{errors[field]}</Text>}
       <View style={styles.input}>
-        <RNPickerSelect placeholder={{ label: `Select ${label.toLowerCase()}`, value: "" }} items={options} onValueChange={(value) => handleChange(field, value)} value={formData[field]} />
+        <RNPickerSelect
+          placeholder={{ label: `Select ${label.toLowerCase()}`, value: "" }}
+          items={options}
+          onValueChange={(value) => handleChange(field, value)}
+          value={formData[field]}
+        />
       </View>
     </>
   );
@@ -105,7 +129,12 @@ export default function Register({ navigation }) {
       <Text style={styles.label}>{label}</Text>
       {errors[field] && <Text style={styles.errorText}>{errors[field]}</Text>}
       <TouchableOpacity onPress={() => setShowCalendar(true)}>
-        <TextInput style={styles.input} value={formData[field] ? formData[field].format("YYYY-MM-DD") : ""} placeholder="YYYY-MM-DD" editable={false} />
+        <TextInput
+          style={styles.input}
+          value={formData[field] ? formData[field].format("YYYY-MM-DD") : ""}
+          placeholder="YYYY-MM-DD"
+          editable={false}
+        />
       </TouchableOpacity>
       {showCalendar && (
         <View style={{ backgroundColor: "#f5f5f5" }}>
@@ -287,7 +316,10 @@ export default function Register({ navigation }) {
           <Button title="Register" onPress={handleSubmit} />
         </View>
         <Modal visible={modalVisible} animationType="fade" transparent={true} onRequestClose={() => setModalVisible(false)}>
-          <Pressable onPress={() => setModalVisible(false)} style={{ flex: 1, justifyContent: "center", alignItems: "center", backgroundColor: "rgba(0, 0, 0, 0.5)" }}>
+          <Pressable
+            onPress={() => setModalVisible(false)}
+            style={{ flex: 1, justifyContent: "center", alignItems: "center", backgroundColor: "rgba(0, 0, 0, 0.5)" }}
+          >
             <View style={{ width: "20%", backgroundColor: "white", padding: 20, borderRadius: 10, alignItems: "center" }}>
               <Text style={{ color: "#00E200", fontSize: 18, fontWeight: "bold", marginBottom: "10%" }}>Inregistrare cu succes!</Text>
               <Button

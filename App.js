@@ -15,6 +15,7 @@ import ForgotPassword from "./screens/forgotPassword";
 import HomeAdmin from "./screens/homeAdmin";
 import ComplainScreen from "./screens/AdminScreens/complainScreen";
 import RequestsAccountScreen from "./screens/AdminScreens/requestsAccountScreen";
+import ComplainStudentScreen from "./screens/complainStudentScreen";
 
 const Stack = createNativeStackNavigator();
 
@@ -129,6 +130,7 @@ export default function App() {
         <Stack.Screen name="settings" component={Settings} options={{ headerTitle: "Setari" }} />
         <Stack.Screen name="ComplainScreen" component={ComplainScreen} options={{ headerTitle: "Lista cu plangeri" }} />
         <Stack.Screen name="RequestsAccountScreen" component={RequestsAccountScreen} options={{ headerTitle: "Conturi in Asteptare" }} />
+        <Stack.Screen name="ComplainStudentScreen" component={ComplainStudentScreen} options={{ headerTitle: "Reclamatiile tale" }} />
       </Stack.Navigator>
     </NavigationContainer>
   );

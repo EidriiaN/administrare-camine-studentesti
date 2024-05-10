@@ -35,12 +35,12 @@ export default function HomeTab({ navigation }) {
   const renderItem = ({ item, index }) => {
     const formattedDate = moment(item.publication_date).format("DD:MM:YYYY");
     return (
-      <View style={{ margin: "1%" }}>
+      <View key={index} style={{ margin: "1%" }}>
         <TouchableOpacity
           onPress={() => setDropdownIndex(dropdownIndex === index ? null : index)}
           style={{
-            flexDirection: "row",
-            alignItems: "center",
+            flexDirection: isWeb ? "row" : "column",
+            alignItems: isWeb ? "center" : null,
             justifyContent: "space-between",
             borderRadius: 8,
             borderStyle: "solid",
@@ -49,10 +49,10 @@ export default function HomeTab({ navigation }) {
             backgroundColor: "white",
           }}
         >
-          <Text style={{ fontSize: 20 }}>{item.title}</Text>
+          <Text style={{ fontSize: 17 }}>{item.title}</Text>
           <View style={{ flexDirection: "row", gap: 5, alignItems: "center", justifyContent: "center" }}>
             <Text style={{ fontSize: 16, marginLeft: "auto" }}>{item.author}</Text>
-            <Text style={{ fontSize: 16 }}>{formattedDate}</Text>
+            <Text style={{ fontSize: 16 }}>{moment(item.publication_date).format("DD:MM:YYYY")}</Text>
             <AntDesign name={dropdownIndex === index ? "caretup" : "caretdown"} size={14} color={dropdownIndex === index ? "black" : "gray"} />
           </View>
         </TouchableOpacity>
@@ -74,7 +74,7 @@ export default function HomeTab({ navigation }) {
               elevation: 5,
             }}
           >
-            <Text style={{ textAlign: "left", fontSize: 20 }}>{item.message}</Text>
+            <Text style={{ textAlign: "left", fontSize: 16 }}>{item.message}</Text>
           </View>
         )}
       </View>
@@ -168,6 +168,6 @@ const styles = StyleSheet.create({
     borderRadius: 6,
     marginTop: "3%",
     margin: "2%",
-    height: 370,
+    height: isWeb ? 370 : "65%",
   },
 });

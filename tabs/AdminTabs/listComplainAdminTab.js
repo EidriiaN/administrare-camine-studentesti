@@ -1,99 +1,41 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { View, StyleSheet, Text, Platform, TouchableOpacity, Pressable, Button, FlatList } from "react-native";
+import axios from "axios";
+import moment from "moment";
 const isWeb = Platform.OS === "web";
-
-const data = [
-  {
-    id: "1",
-    studentName: "George",
-    room: "4",
-    option: "Zgomot și perturbări",
-    emergency: "Non-urgent",
-    status: false,
-    date: "2024-10-05",
-    message: "Colegii de la camera 3 faci galagie dupa ora 12 noapte si imi perturba somnul.",
-  },
-  {
-    id: "2",
-    studentName: "George",
-    room: "4",
-    option: "Probleme de întreținere",
-    emergency: "Urgent",
-    status: true,
-    date: "2024-10-03",
-    message: "Teava de la baie pierde apa",
-  },
-  {
-    id: "3",
-    studentName: "George",
-    room: "4",
-    option: "Comunicare sau întrebări generale",
-    emergency: "Semi-urgent",
-    status: true,
-    date: "2023-10-20",
-    message: "Cum pot rezolva cu visa de flotant?",
-  },
-  {
-    id: "4",
-    studentName: "George",
-    room: "4",
-    option: "Probleme legate de vecini",
-    emergency: "Non-urgent",
-    status: false,
-    date: "2023-9-12",
-    message: "Vecinul de deasupra lasa mereu gunoiul pe scara blocului.",
-  },
-  {
-    id: "5",
-    studentName: "George",
-    room: "4",
-    option: "Alte probleme",
-    emergency: "Non-urgent",
-    status: true,
-    date: "2024-2-9",
-    message: "Lipsa apei calde in bucatarie.",
-  },
-  {
-    id: "6",
-    studentName: "George",
-    room: "4",
-    option: "Probleme cu mobilierul sau echipamentul",
-    emergency: "Urgent",
-    status: false,
-    date: "2024-3-1",
-    message: "Scaunul de la birou este rupt și nu pot să-l folosesc în siguranță.",
-  },
-  {
-    id: "7",
-    studentName: "George",
-    room: "4",
-    option: "Probleme de întreținere",
-    emergency: "Semi-urgent",
-    status: true,
-    date: "2022-12-1",
-    message: "Becul din sufragerie nu funcționează și trebuie înlocuit.",
-  },
-  {
-    id: "8",
-    studentName: "George",
-    room: "4",
-    option: "Probleme legate de vecini",
-    emergency: "Urgent",
-    status: false,
-    date: "2020-1-14",
-    message: "Vecinul de la etajul doi își lasă constant animalul de companie să latre la ore târzii.",
-  },
-];
+const ip = Platform.OS === "web" ? process.env.EXPO_PUBLIC_LOCAL : process.env.EXPO_PUBLIC_URL;
 
 export default function ListComplainAdminTab({ navigation }) {
-  const [sortedData, setSortedData] = useState(data);
+  const [complainData, setComplainData] = useState();
+  const [sortedData, setSortedData] = useState();
   const [sortBy, setSortBy] = useState(null);
-  const [sortOrder, setSortOrder] = useState("asc"); // Stare pentru a ține evidența ordinii sortării: "asc" sau "desc"
+  const [sortOrder, setSortOrder] = useState("asc");
+  const [loading, setLoading] = useState(false);
+
+  useEffect(() => {
+    const getComplainData = async () => {
+      setLoading(true);
+      try {
+        const response = await axios.get(`http://${ip}:3000/getAdminComplains`, {
+          withCredentials: true,
+        });
+
+        setComplainData(response.data);
+        setSortedData(response.data);
+      } catch (error) {
+        console.error("Error getComplains:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+    getComplainData();
+  }, []);
+  console.log(complainData);
 
   const sortDataByDate = () => {
-    const sorted = [...data].sort((a, b) => {
-      const dateA = new Date(a.date);
-      const dateB = new Date(b.date);
+    const sorted = [...sortedData].sort((a, b) => {
+      const dateA = new Date(a.report_date).setHours(0, 0, 0, 0);
+      const dateB = new Date(b.report_date).setHours(0, 0, 0, 0);
       return sortOrder === "asc" ? dateA - dateB : dateB - dateA;
     });
     setSortedData(sorted);
@@ -103,8 +45,8 @@ export default function ListComplainAdminTab({ navigation }) {
 
   const sortDataByUrgency = () => {
     const urgencyOrder = { "Non-urgent": 0, "Semi-urgent": 1, Urgent: 2 };
-    const sorted = [...data].sort((a, b) => {
-      return sortOrder === "asc" ? urgencyOrder[a.emergency] - urgencyOrder[b.emergency] : urgencyOrder[b.emergency] - urgencyOrder[a.emergency];
+    const sorted = [...sortedData].sort((a, b) => {
+      return sortOrder === "asc" ? urgencyOrder[a.urgency] - urgencyOrder[b.urgency] : urgencyOrder[b.urgency] - urgencyOrder[a.urgency];
     });
     setSortedData(sorted);
     setSortBy("Urgency");
@@ -112,20 +54,12 @@ export default function ListComplainAdminTab({ navigation }) {
   };
 
   const sortDataByStatus = () => {
-    const sorted = [...data].sort((a, b) => {
+    const sorted = [...sortedData].sort((a, b) => {
       return sortOrder === "asc" ? (a.status === b.status ? 0 : a.status ? 1 : -1) : a.status === b.status ? 0 : a.status ? -1 : 1;
     });
     setSortedData(sorted);
     setSortBy("Status");
     setSortOrder(sortOrder === "asc" ? "desc" : "asc");
-  };
-
-  const formatDate = (dateString) => {
-    const date = new Date(dateString);
-    const day = date.getDate();
-    const month = date.getMonth() + 1; // Indexul lunilor începe de la 0, așa că adăugăm 1
-    const year = date.getFullYear();
-    return `${day < 10 ? "0" : ""}${day}:${month < 10 ? "0" : ""}${month}:${year}`;
   };
 
   const renderItem = ({ item, index }) => {
@@ -147,8 +81,8 @@ export default function ListComplainAdminTab({ navigation }) {
           }}
         >
           <View style={{ flexDirection: "column", width: "70%" }}>
-            <Text style={{ fontSize: 15 }}>{item.option}</Text>
-            <Text style={{ fontSize: 14 }}>{item.emergency}</Text>
+            <Text style={{ fontSize: 15 }}>{item.category}</Text>
+            <Text style={{ fontSize: 14 }}>{item.urgency}</Text>
             {item.status === true ? (
               <Text style={{ fontSize: 13, color: "#00E200" }}>rezolvat</Text>
             ) : (
@@ -164,8 +98,8 @@ export default function ListComplainAdminTab({ navigation }) {
               justifyContent: "center",
             }}
           >
-            <Text style={{ fontSize: 13 }}>Camera: {item.room}</Text>
-            <Text style={{ fontSize: 13 }}>{formatDate(item.date)}</Text>
+            <Text style={{ fontSize: 13 }}>Camera: {item.room_number}</Text>
+            <Text style={{ fontSize: 13 }}>{moment(item.report_date).format("DD:MM:YYYY")}</Text>
           </View>
         </TouchableOpacity>
       </View>
