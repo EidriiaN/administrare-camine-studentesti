@@ -34,6 +34,9 @@ const acceptRegisterRequest = require("./routes/acceptRegisterRequest");
 const rejectRegisterRequest = require("./routes/rejectRegisterRequest");
 const addAnnounce = require("./routes/addAnnounce");
 const getAnnounces = require("./routes/getAnnounces");
+const addComplain = require("./routes/addComplain");
+const getComplains = require("./routes/getComplains");
+const getAdminComplains = require("./routes/getAdminComplains");
 
 app.use(bodyParser.json());
 // app.use(cookieParser());
@@ -76,7 +79,10 @@ app.use("/acceptRegisterRequest", acceptRegisterRequest);
 app.use("/rejectRegisterRequest", rejectRegisterRequest);
 app.use("/addAnnounce", addAnnounce);
 app.use("/getAnnounces", getAnnounces);
+app.use("/addComplain", addComplain);
+app.use("/getComplains", getComplains);
+app.use("/getAdminComplains", getAdminComplains);
 
 app.listen(PORT, "0.0.0.0", () => {
-  console.log(`Serverul este ascultat la adresa: http://${IP_ADDRESS}:${PORT}`);
+  console.log(`Serverul ruleaza la adresa: http://${IP_ADDRESS}:${PORT}`);
 });

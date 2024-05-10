@@ -4,12 +4,12 @@ const router = express.Router();
 const db = require("../db");
 
 router.get("/", (req, res) => {
-  const sql = "SELECT * FROM announcements ORDER BY publication_date DESC";
+  const sql = "SELECT * FROM complains";
 
   db.query(sql, (err, result) => {
     if (err) {
-      console.error("Eroare la inserarea anunțului:", err);
-      res.status(500).send("Eroare la inserarea anunțului");
+      console.error("Eroare getComplains", err);
+      res.status(500).send("Eroare");
       return;
     }
     res.status(200).json(result);
