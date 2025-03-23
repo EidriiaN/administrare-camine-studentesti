@@ -5,14 +5,10 @@ const db = require("../db");
 
 router.get("/", (req, res) => {
   const sql = `
-  SELECT complains.*, students.name, students.surname, dorm_room.room_number
-  FROM complains
-  INNER JOIN students ON complains.id_student = students.id
-  INNER JOIN dorm_room ON students.id_room = dorm_room.id_room
-  ORDER BY complains.report_date DESC
+  SELECT * FROM parking_requests WHERE dorm_number=?
 `;
 
-  db.query(sql, (err, result) => {
+  db.query(sql, req.session.adminData.dorm_number, (err, result) => {
     if (err) {
       console.error("Eroare getComplains", err);
       res.status(500).send("Eroare");
