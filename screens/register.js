@@ -20,9 +20,9 @@ import DateTimePicker from "react-native-ui-datepicker";
 import dayjs from "dayjs";
 
 const logo = require("../assets/logo-upg-2.png");
+const ip = Platform.OS === "web" ? process.env.EXPO_PUBLIC_LOCAL : process.env.EXPO_PUBLIC_URL;
 
 export default function Register({ navigation }) {
-  const ip = Platform.OS === "web" ? process.env.EXPO_PUBLIC_LOCAL : process.env.EXPO_PUBLIC_URL;
   const [formData, setFormData] = useState({
     name: "",
     surname: "",
@@ -48,6 +48,7 @@ export default function Register({ navigation }) {
     tuition: "",
     studyYear: "",
     specialization: "",
+    group_number: "",
     dormPreference: "",
     roomPreference: "",
     emergencyContactName: "",
@@ -80,7 +81,7 @@ export default function Register({ navigation }) {
   const handleSubmit = () => {
     if (validateForm()) {
       axios
-        .post(`http://${ip}:3000/register-request`, formData, { withCredentials: true })
+        .post(`https://${ip}:3000/register-request`, formData, { withCredentials: true })
         .then((response) => {
           if (response.status === 200) {
             console.log("Cererea de înregistrare a fost trimisă cu succes!");
@@ -261,7 +262,6 @@ export default function Register({ navigation }) {
         { label: "triplă", value: "tripla" },
       ],
     },
-    // Add more picker data as needed
   };
 
   return (
@@ -302,6 +302,7 @@ export default function Register({ navigation }) {
           {renderPicker("Taxă de studii", "tuition", pickerData.tuition.options)}
           {renderPicker("Anul de studiu", "studyYear", pickerData.studyYear.options)}
           {renderPicker("Specializarea", "specialization", pickerData.faculty.specialization[formData.faculty] || [])}
+          {renderInput("Numarul Grupei", "group_number", "phone-pad", "numeric")}
 
           <Text style={styles.input_description}>Informații despre cămin</Text>
 

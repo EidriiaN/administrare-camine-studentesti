@@ -17,7 +17,7 @@ export default function RequestsAccountScreen({ route, navigation }) {
       delete studentData.id;
       delete studentData.status;
 
-      const response = await axios.post(`http://${ip}:3000/acceptRegisterRequest`, item);
+      const response = await axios.post(`https://${ip}:3000/acceptRegisterRequest`, item);
       if (response.status === 200) {
         setModalVisible(true);
       } else {
@@ -31,7 +31,7 @@ export default function RequestsAccountScreen({ route, navigation }) {
   const handleReject = async () => {
     try {
       const studentId = item.id;
-      const response = await axios.post(`http://${ip}:3000/rejectRegisterRequest`, { id: studentId });
+      const response = await axios.post(`https://${ip}:3000/rejectRegisterRequest`, { id: studentId });
       if (response.status === 200) {
         setModalVisible(true);
       } else {

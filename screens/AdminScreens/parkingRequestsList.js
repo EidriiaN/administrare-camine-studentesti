@@ -1,12 +1,12 @@
 import React, { useState, useEffect } from "react";
-import { View, StyleSheet, Text, Platform, TouchableOpacity, Button, FlatList, ActivityIndicator } from "react-native";
+import { View, StyleSheet, Text, Platform, TouchableOpacity, Pressable, Button, FlatList, ActivityIndicator } from "react-native";
 import axios from "axios";
 import moment from "moment";
-const ip = Platform.OS === "web" ? process.env.EXPO_PUBLIC_LOCAL : process.env.EXPO_PUBLIC_URL;
 const isWeb = Platform.OS === "web";
+const ip = Platform.OS === "web" ? process.env.EXPO_PUBLIC_LOCAL : process.env.EXPO_PUBLIC_URL;
 
-export default function ListComplainTab({ navigation }) {
-  const [complainData, setComplainData] = useState();
+export default function ParkingRequestsList({ navigation }) {
+  const [parkingData, setParkingData] = useState();
   const [sortedData, setSortedData] = useState();
   const [sortBy, setSortBy] = useState(null);
   const [sortOrder, setSortOrder] = useState("asc");
@@ -16,11 +16,11 @@ export default function ListComplainTab({ navigation }) {
     const getComplainData = async () => {
       setLoading(true);
       try {
-        const response = await axios.get(`http://${ip}:3000/getComplains`, {
+        const response = await axios.get(`https://${ip}:3000/getParkingRequests`, {
           withCredentials: true,
         });
 
-        setComplainData(response.data);
+        setParkingData(response.data);
         setSortedData(response.data);
       } catch (error) {
         console.error("Error getComplains:", error);
@@ -30,6 +30,8 @@ export default function ListComplainTab({ navigation }) {
     };
     getComplainData();
   }, []);
+
+  console.log(sortedData, "parking data");
 
   const sortDataByDate = () => {
     const sorted = [...sortedData].sort((a, b) => {
@@ -61,14 +63,16 @@ export default function ListComplainTab({ navigation }) {
     setSortOrder(sortOrder === "asc" ? "desc" : "asc");
   };
 
+  console.log(parkingData, "parkingdata");
+
   const renderItem = ({ item, index }) => {
     return (
       <View style={{ margin: "1%" }}>
         <TouchableOpacity
           style={{
             flexDirection: "row",
-            alignItems: "center",
             justifyContent: "space-between",
+            alignItems: "center",
             borderRadius: 8,
             borderStyle: "solid",
             borderWidth: 0.8,
@@ -76,20 +80,33 @@ export default function ListComplainTab({ navigation }) {
             backgroundColor: "white",
           }}
           onPress={() => {
-            navigation.navigate("ComplainStudentScreen", { item });
+            navigation.navigate("ParkingRequestScreenAdmin", { item });
           }}
         >
-          <View style={{ flexDirection: "column" }}>
-            <Text style={{ fontSize: 19 }}>{item.category}</Text>
-            <Text style={{ fontSize: 18 }}>{item.urgency}</Text>
-            {item.status === true ? (
-              <Text style={{ fontSize: 15, color: "#00E200" }}>rezolvat</Text>
+          <View style={{ flexDirection: "column", width: "70%", justifyContent: "center" }}>
+            <View style={{ flexDirection: "row", gap: 5 }}>
+              <Text style={{ fontSize: 15 }}>{item.full_name},</Text>
+              <Text style={{ fontSize: 14 }}>Media: {item.average_grade}</Text>
+            </View>
+            <Text style={{ fontSize: 14 }}>Nr.inmatriculare: {item.vehicle_registration_number}</Text>
+            {item.status === "approved" ? (
+              <Text style={{ color: "#00E200" }}>rezolvat</Text>
+            ) : item.status === "rejected" ? (
+              <Text style={{ color: "#FF0000" }}>respins</Text>
             ) : (
-              <Text style={{ fontSize: 15, color: "#FAD800" }}>in asteptare</Text>
+              <Text style={{ color: "#FAD800" }}>in asteptare</Text>
             )}
           </View>
-          <View style={{ flexDirection: "row", alignItems: "center" }}>
-            <Text style={{ fontSize: 15 }}>{moment(item.report_date).format("DD:MM:YYYY")}</Text>
+          <View
+            style={{
+              flexDirection: "collumn",
+              width: "30%",
+              alignItems: "flex-end",
+              justifyContent: "center",
+            }}
+          >
+            <Text style={{ fontSize: 13 }}>Camera: {item.room_number}</Text>
+            <Text style={{ fontSize: 13 }}>{moment(item.report_date).format("DD:MM:YYYY")}</Text>
           </View>
         </TouchableOpacity>
       </View>
@@ -104,22 +121,35 @@ export default function ListComplainTab({ navigation }) {
     );
   }
 
-  console.log(complainData);
-  console.log(sortedData);
-
   return (
     <View style={styles.container}>
       <View style={styles.sortContainer}>
-        <Text style={{ marginBottom: "3%", marginStart: "3%", fontSize: 18 }}>Sortare</Text>
         <View
           style={{
             flexDirection: "row",
-            justifyContent: "space-evenly",
+            marginBottom: "2%",
           }}
         >
-          <Button title="Status" onPress={sortDataByStatus} />
-          <Button title="Data" onPress={sortDataByDate} />
-          <Button title="Urgentare" onPress={sortDataByUrgency} />
+          <Text style={{ fontSize: 18 }}>Sortare</Text>
+          <View
+            style={{
+              flexDirection: "row",
+              justifyContent: "space-evenly",
+              width: "90%",
+            }}
+          >
+            <Button title="Status" onPress={sortDataByStatus} />
+            <Button title="Data" onPress={sortDataByDate} />
+            {/* <Button title="Urgentare" onPress={sortDataByUrgency} /> */}
+          </View>
+        </View>
+        <View
+          style={{
+            flexDirection: "row",
+            gap: 5,
+          }}
+        >
+          <Button title="Cereri studenti" color={"gray"} onPress={() => navigation.replace("homeAdmin", { screen: "Lista cereri" })} />
         </View>
       </View>
       <View style={styles.contentContainer}>
@@ -154,7 +184,7 @@ const styles = StyleSheet.create({
     shadowRadius: 4,
     elevation: 5,
     padding: isWeb ? "1%" : "3%",
-    width: isWeb ? 700 : null,
+    width: isWeb ? 700 : "100%",
   },
   sortContainer: {
     alignSelf: "center",

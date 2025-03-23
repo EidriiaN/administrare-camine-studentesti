@@ -1,9 +1,44 @@
 import React, { useState } from "react";
-import { View, StyleSheet, Text, TextInput, Button, KeyboardAvoidingView, Platform } from "react-native";
+import { View, StyleSheet, Text, TextInput, Button, KeyboardAvoidingView, Platform, ActivityIndicator } from "react-native";
+import axios from "axios";
 import moment from "moment";
+import OneOptionModal from "../../components/OneOptionModal";
+import TwoOptionsModal from "../../components/TwoOptionsModal";
+import Loading from "../../components/Loading";
+const ip = Platform.OS === "web" ? process.env.EXPO_PUBLIC_LOCAL : process.env.EXPO_PUBLIC_URL;
 
-export default function ComplainStudentScreen({ route }) {
+export default function ComplainStudentScreen({ route, navigation }) {
   const { item } = route.params;
+  const [modalType, setModalType] = useState(null);
+  const [loading, setLoading] = useState(false);
+
+  const handleDelete = async (id) => {
+    setLoading(true);
+    try {
+      const response = await axios.delete(`https://${ip}:3000/deleteComplain/${id}`, {
+        withCredentials: true,
+      });
+      console.log("succes la stergere");
+    } catch (error) {
+      console.error("Eroare la ștergere:", error);
+    } finally {
+      setLoading(false);
+    }
+
+    setModalType("oneOption");
+  };
+
+  if (loading) {
+    return <Loading />;
+  }
+
+  const handleDisableButton = () => {
+    if (item.status) {
+      return true;
+    }
+    return false;
+  };
+
   return (
     <KeyboardAvoidingView style={{ flex: 1 }} behavior={Platform.OS === "ios" ? "padding" : "height"}>
       <View style={styles.container}>
@@ -18,12 +53,13 @@ export default function ComplainStudentScreen({ route }) {
               <Text>Grad de urgentare: {item.urgency}</Text>
             </View>
             <View style={{ gap: 5 }}>
-              {item.status === true ? (
+              {item.status == true ? (
                 <Text style={{ color: "#00E200", fontWeight: "bold" }}>rezolvat</Text>
               ) : (
                 <Text style={{ color: "#FAD800", fontWeight: "bold" }}>in asteptare</Text>
               )}
               <Text>Data: {moment(item.report_date).format("DD:MM:YYYY")}</Text>
+              <Text>Data raspuns: {item.resolution_date ? moment(item.resolution_date).format("DD:MM:YYYY") : "-"}</Text>
             </View>
           </View>
           <View>
@@ -44,7 +80,7 @@ export default function ComplainStudentScreen({ route }) {
           </View>
           <View style={{ height: "30%" }}>
             <Text>Raspuns:</Text>
-            {item.reponse ? (
+            {item.status ? (
               <Text style={{ marginTop: "1%", marginBottom: "2%", borderColor: "black", borderWidth: 1, borderRadius: 5, padding: "2%" }}>
                 {item.response}
               </Text>
@@ -68,9 +104,27 @@ export default function ComplainStudentScreen({ route }) {
             )}
           </View>
           <View style={{ marginTop: "auto", marginBottom: "5%" }}>
-            <Button title="Sterge plangerea" />
+            <Button title="Sterge plangerea" onPress={() => setModalType("twoOptions")} disabled={handleDisableButton()} />
           </View>
         </View>
+        <OneOptionModal
+          visible={modalType === "oneOption"}
+          onClose={() => {
+            setModalType(null);
+            navigation.replace("home", { screen: "Lista cereri" });
+          }}
+          onOption={() => {
+            setModalType(modalType === "oneOption");
+            navigation.replace("home", { screen: "Lista cereri" });
+          }}
+        />
+        <TwoOptionsModal
+          visible={modalType === "twoOptions"}
+          text={"Esti sigur ca vrei sa stergi reclamatia?"}
+          onClose={() => setModalType(null)}
+          onOption1={() => handleDelete(item.id)}
+          onOption2={() => setModalType(null)}
+        />
       </View>
     </KeyboardAvoidingView>
   );

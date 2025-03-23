@@ -6,22 +6,21 @@ import OneOptionModal from "../../components/OneOptionModal";
 import Loading from "../../components/Loading";
 const ip = Platform.OS === "web" ? process.env.EXPO_PUBLIC_LOCAL : process.env.EXPO_PUBLIC_URL;
 
-export default function ComplainScreen({ route, navigation }) {
+export default function ParkingRequestScreenAdmin({ route, navigation }) {
   const { item } = route.params;
-  console.log(item, "item in complainscreen");
+  console.log(item, "item in parkingRequestScreenAdmin");
   const [showModal, setShowModal] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [responseMessage, setResponseMessage] = useState("");
 
-  const [complainResponse, setComplainResponse] = useState({
-    response: "",
-    status: 1,
-    resolution_date: moment(),
-  });
-
-  const handleSendResponse = async () => {
+  const handleSendResponse = async (status) => {
     setLoading(true);
     try {
-      const response = await axios.patch(`https://${ip}:3000/resolveComplain/${item.id}`, complainResponse, {
+      const parkingResponse = {
+        response: responseMessage,
+        status: status,
+      };
+      const response = await axios.patch(`https://${ip}:3000/updateParkingRequest/${item.id}`, parkingResponse, {
         withCredentials: true,
         headers: {
           "Content-Type": "application/json",
@@ -37,7 +36,7 @@ export default function ComplainScreen({ route, navigation }) {
   };
 
   const handleDisabledButton = () => {
-    if (item.status || !complainResponse.response) {
+    if (item.status !== "pending") {
       return true;
     }
     return false;
@@ -54,27 +53,46 @@ export default function ComplainScreen({ route, navigation }) {
           <Text style={{ textAlign: "center", fontSize: 20, marginBottom: "8%" }}>{item.category}</Text>
           <View style={styles.infoContainer}>
             <View style={{ gap: 5 }}>
-              <Text>
-                Student: {item.name} {item.surname}
-              </Text>
-              <Text>Camera: {item.room_number}</Text>
-              <Text>Grad de urgentare: {item.urgency}</Text>
+              <Text>Student: {item.full_name}</Text>
+              <Text>Facultatea: {item.faculty}</Text>
+              <Text>Telefon: {item.phoneNumber}</Text>
+              <Text>Media: {item.average_grade}</Text>
             </View>
             <View style={{ gap: 5 }}>
-              {item.status == true ? <Text style={{ color: "#00E200" }}>rezolvat</Text> : <Text style={{ color: "#FAD800" }}>in asteptare</Text>}
+              <Text>Trimestrul: {item.parking_trimester}</Text>
+              <Text>Pentru anul: {item.academic_year_requested}</Text>
+              <Text>Vehicul: {item.vehicle_brand}</Text>
+              <Text>Numa inmatriculare: {item.vehicle_registration_number}</Text>
+            </View>
+            <View style={{ gap: 5 }}>
+              <Text>Camera: {item.room_number}</Text>
+              {item.status === "approved" ? (
+                <Text style={{ color: "#00E200" }}>rezolvat</Text>
+              ) : item.status === "rejected" ? (
+                <Text style={{ color: "#FF0000" }}>respins</Text>
+              ) : (
+                <Text style={{ color: "#FAD800" }}>in asteptare</Text>
+              )}
               <Text>Data: {moment(item.report_date).format("DD:MM:YYYY")}</Text>
             </View>
           </View>
-          <View>
-            <Text>Mesaj:</Text>
-            <Text style={{ textAlign: "justify", padding: "2%" }}>{item.message}</Text>
-          </View>
-          <View>
+          <View style={{ marginTop: "5%" }}>
             <Text>Raspuns:</Text>
-            {item.status == true ? (
-              <Text style={{ marginTop: "1%", marginBottom: "2%", borderColor: "black", borderWidth: 1, borderRadius: 5, padding: "2%" }}>
-                {item.response}
-              </Text>
+            {item.status !== "pending" ? (
+              <View
+                style={{
+                  marginTop: "1%",
+                  marginBottom: "2%",
+                  borderColor: "black",
+                  borderWidth: 1,
+                  borderRadius: 5,
+                  padding: "2%",
+                  textAlign: "center",
+                }}
+              >
+                <Text style={{ textAlign: "center", marginBottom: "1%" }}>Cererea a fost solutionata</Text>
+                <Text>{item.response}</Text>
+              </View>
             ) : (
               <TextInput
                 placeholder={"mesaj"}
@@ -86,14 +104,19 @@ export default function ComplainScreen({ route, navigation }) {
                   borderRadius: 5,
                   textAlignVertical: "top",
                   height: 150,
-                  marginBottom: 30,
+                  marginBottom: 20,
                   marginTop: "1%",
                 }}
-                value={complainResponse.response}
-                onChangeText={(text) => setComplainResponse({ ...complainResponse, response: text })}
+                value={responseMessage}
+                onChangeText={(text) => setResponseMessage(text)}
               />
             )}
-            <Button title="Trimite" onPress={handleSendResponse} disabled={handleDisabledButton()} />
+          </View>
+          <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
+            <View style={{ flexDirection: "row", justifyContent: "space-between", width: "50%" }}>
+              <Button title="  Accepta  " onPress={() => handleSendResponse(3)} disabled={handleDisabledButton()} />
+              <Button title="  Respinge  " onPress={() => handleSendResponse(1)} disabled={handleDisabledButton()} />
+            </View>
           </View>
         </View>
       </View>
@@ -101,11 +124,11 @@ export default function ComplainScreen({ route, navigation }) {
         visible={showModal}
         onOption={() => {
           setShowModal(false);
-          navigation.replace("homeAdmin", { screen: "Lista cereri" });
+          navigation.replace("ParkingRequestsList");
         }}
         onClose={() => {
           setShowModal(false);
-          navigation.replace("homeAdmin", { screen: "Lista cereri" });
+          navigation.replace("ParkingRequestsList");
         }}
       />
     </KeyboardAvoidingView>

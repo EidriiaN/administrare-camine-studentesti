@@ -21,11 +21,16 @@
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#ffffff"
-      }
-
+      },
+      "package": "com.eidriian.AdministrareCamineUPG"
     },
     "web": {
       "favicon": "./assets/favicon.png"
+    },
+    "extra": {
+      "eas": {
+        "projectId": "c319cac7-b36c-403a-8c6d-a6bca3d3096b"
+      }
     }
   }
 }

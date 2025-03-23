@@ -5,17 +5,23 @@ import { Alert, BackHandler, ActivityIndicator, View, Platform, Pressable } from
 import { NavigationContainer } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import Login from "./screens/login";
-import Home from "./screens/home";
+import Home from "./screens/UserScreens/home";
 import axios from "axios";
 import { MaterialIcons } from "@expo/vector-icons";
-import MyRoom from "./screens/myRoom";
+import MyRoom from "./screens/UserScreens/myRoom";
 import Settings from "./screens/settings";
 import Register from "./screens/register";
 import ForgotPassword from "./screens/forgotPassword";
-import HomeAdmin from "./screens/homeAdmin";
+import HomeAdmin from "./screens/AdminScreens/homeAdmin";
 import ComplainScreen from "./screens/AdminScreens/complainScreen";
 import RequestsAccountScreen from "./screens/AdminScreens/requestsAccountScreen";
-import ComplainStudentScreen from "./screens/complainStudentScreen";
+import ComplainStudentScreen from "./screens/UserScreens/complainStudentScreen";
+import RoomLess from "./screens/roomLess";
+import GenerateWord from "./screens/UserScreens/generateWord";
+import ParkingRequest from "./screens/UserScreens/parkingRequest";
+import ParkingRequestsList from "./screens/AdminScreens/parkingRequestsList";
+import Room from "./screens/AdminScreens/room";
+import ParkingRequestScreenAdmin from "./screens/AdminScreens/parkingRequestScreenAdmin";
 
 const Stack = createNativeStackNavigator();
 
@@ -83,7 +89,6 @@ export default function App() {
   }, []);
 
   if (isCheckingSession) {
-    // Încă se verifică sesiunea, puteți afișa, de exemplu, un ecran de încărcare
     return (
       <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
         <ActivityIndicator size={Platform.OS == "web" ? 80 : "large"} color="#00BFFF" />
@@ -105,7 +110,6 @@ export default function App() {
           component={ForgotPassword}
           options={{
             headerTitle: "Am uitat parola",
-            headerTitleAlign: "center",
           }}
         />
         <Stack.Screen
@@ -131,6 +135,11 @@ export default function App() {
         <Stack.Screen name="ComplainScreen" component={ComplainScreen} options={{ headerTitle: "Lista cu plangeri" }} />
         <Stack.Screen name="RequestsAccountScreen" component={RequestsAccountScreen} options={{ headerTitle: "Conturi in Asteptare" }} />
         <Stack.Screen name="ComplainStudentScreen" component={ComplainStudentScreen} options={{ headerTitle: "Reclamatiile tale" }} />
+        <Stack.Screen name="RoomLess" component={RoomLess} options={{ headerTitle: "Starea contului" }} />
+        <Stack.Screen name="ParkingRequest" component={ParkingRequest} options={{ headerTitle: "Parcare in campus" }} />
+        <Stack.Screen name="ParkingRequestsList" component={ParkingRequestsList} options={{ headerTitle: "Cereri parcare" }} />
+        <Stack.Screen name="Room" component={Room} options={{ headerTitle: "Camera" }} />
+        <Stack.Screen name="ParkingRequestScreenAdmin" component={ParkingRequestScreenAdmin} options={{ headerTitle: "Cerere parcare" }} />
       </Stack.Navigator>
     </NavigationContainer>
   );

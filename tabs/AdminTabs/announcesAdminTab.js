@@ -15,6 +15,7 @@ import {
 } from "react-native";
 import axios from "axios";
 import moment from "moment";
+import OneOptionModal from "../../components/OneOptionModal";
 import { AntDesign } from "@expo/vector-icons";
 const isWeb = Platform.OS === "web";
 const Container = isWeb ? ScrollView : ScrollView;
@@ -33,7 +34,7 @@ export default function AnnouncesAdminTab({ navigation }) {
     const getAnnouncesData = async () => {
       setLoading(true);
       try {
-        const response = await axios.get(`http://${ip}:3000/getAnnounces`, {
+        const response = await axios.get(`https://${ip}:3000/getAnnounces`, {
           withCredentials: true,
         });
 
@@ -55,7 +56,7 @@ export default function AnnouncesAdminTab({ navigation }) {
         message: message,
       };
 
-      const response = await axios.post(`http://${ip}:3000/addAnnounce`, announceData, {
+      const response = await axios.post(`https://${ip}:3000/addAnnounce`, announceData, {
         withCredentials: true,
       });
 
@@ -66,6 +67,19 @@ export default function AnnouncesAdminTab({ navigation }) {
     } catch (error) {
       console.error("Eroare la trimiterea anunțului:", error);
       Alert.alert("Eroare", "A apărut o eroare în timpul trimiterea anunțului. Te rugăm să încerci din nou mai târziu.");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const deleteAnnounce = async (id) => {
+    setLoading(true);
+    try {
+      const response = await axios.delete(`https://${ip}:3000/deleteAnnounce/${id}`, { withCredentials: true });
+      console.log("succes la stergere");
+      setModalVisible(true);
+    } catch (error) {
+      console.error("Eroare la stergere:", error);
     } finally {
       setLoading(false);
     }
@@ -174,33 +188,38 @@ export default function AnnouncesAdminTab({ navigation }) {
                   }}
                 >
                   <Text style={{ textAlign: "left", fontSize: 16 }}>{item.message}</Text>
+                  <Pressable style={{ alignSelf: "flex-end" }} onPress={() => deleteAnnounce(item.id)}>
+                    <AntDesign name="delete" size={24} color="black" />
+                  </Pressable>
                 </View>
               )}
             </View>
           ))}
           <View style={{ flexDirection: "row", justifyContent: "center", marginTop: "auto", marginBottom: "1%" }}>
-            {startIndex + 5 < announcesData.length && <Button title="Următoarele 5" onPress={showNextAnnounces} />}
-            {startIndex > 0 && <Button title="Anterioarele 5" onPress={showPreviousAnnounces} />}
+            {startIndex + 5 < announcesData.length && (
+              <Pressable onPress={showNextAnnounces}>
+                <AntDesign name="arrowright" size={24} color="black" />
+              </Pressable>
+            )}
+            {startIndex > 0 && (
+              <Pressable onPress={showPreviousAnnounces}>
+                <AntDesign name="arrowleft" size={24} color="black" />
+              </Pressable>
+            )}
           </View>
         </View>
 
-        <Modal visible={modalVisible} animationType="fade" transparent={true} onRequestClose={() => setModalVisible(false)}>
-          <Pressable
-            onPress={() => setModalVisible(false)}
-            style={{ flex: 1, justifyContent: "center", alignItems: "center", backgroundColor: "rgba(0, 0, 0, 0.5)" }}
-          >
-            <View style={{ width: "20%", backgroundColor: "white", padding: 20, borderRadius: 10, alignItems: "center" }}>
-              <Text style={{ color: "#00E200", fontSize: 18, fontWeight: "bold", marginBottom: "10%" }}>Succes!</Text>
-              <Button
-                title="Inchide"
-                onPress={() => {
-                  setModalVisible(false);
-                  navigation.replace("homeAdmin", { screen: "Anunturi" });
-                }}
-              />
-            </View>
-          </Pressable>
-        </Modal>
+        <OneOptionModal
+          visible={modalVisible}
+          onClose={() => {
+            setModalVisible(false);
+            navigation.replace("homeAdmin", { screen: "Anunturi" });
+          }}
+          onOption={() => {
+            setModalVisible(false);
+            navigation.replace("homeAdmin", { screen: "Anunturi" });
+          }}
+        />
       </Container>
     </KeyboardAvoidingView>
   );

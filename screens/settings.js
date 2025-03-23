@@ -1,10 +1,11 @@
 import React from "react";
-import { View, StyleSheet, Text } from "react-native";
+import { View, StyleSheet, Text, Button } from "react-native";
 
-export default function Settings() {
+export default function Settings({ navigation }) {
   return (
     <View style={styles.container}>
       <Text>Settings</Text>
+      <Button title="Generare Word" onPress={() => navigation.navigate("GenerateWord")} />
     </View>
   );
 }

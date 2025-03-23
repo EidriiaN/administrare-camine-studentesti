@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { View, StyleSheet, Text, Platform, TouchableOpacity, Pressable, Button, FlatList } from "react-native";
+import { View, StyleSheet, Text, Platform, TouchableOpacity, Pressable, Button, FlatList, ActivityIndicator } from "react-native";
 import axios from "axios";
 import moment from "moment";
 const isWeb = Platform.OS === "web";
@@ -16,7 +16,7 @@ export default function ListComplainAdminTab({ navigation }) {
     const getComplainData = async () => {
       setLoading(true);
       try {
-        const response = await axios.get(`http://${ip}:3000/getAdminComplains`, {
+        const response = await axios.get(`https://${ip}:3000/getAdminComplains`, {
           withCredentials: true,
         });
 
@@ -30,7 +30,6 @@ export default function ListComplainAdminTab({ navigation }) {
     };
     getComplainData();
   }, []);
-  console.log(complainData);
 
   const sortDataByDate = () => {
     const sorted = [...sortedData].sort((a, b) => {
@@ -83,7 +82,7 @@ export default function ListComplainAdminTab({ navigation }) {
           <View style={{ flexDirection: "column", width: "70%" }}>
             <Text style={{ fontSize: 15 }}>{item.category}</Text>
             <Text style={{ fontSize: 14 }}>{item.urgency}</Text>
-            {item.status === true ? (
+            {item.status == true ? (
               <Text style={{ fontSize: 13, color: "#00E200" }}>rezolvat</Text>
             ) : (
               <Text style={{ fontSize: 13, color: "#FAD800" }}>in asteptare</Text>
@@ -105,19 +104,44 @@ export default function ListComplainAdminTab({ navigation }) {
       </View>
     );
   };
+
+  if (loading) {
+    return (
+      <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
+        <ActivityIndicator size={Platform.OS == "web" ? 80 : "large"} color="#00BFFF" />
+      </View>
+    );
+  }
+
   return (
     <View style={styles.container}>
       <View style={styles.sortContainer}>
-        <Text style={{ marginBottom: "3%", marginStart: "3%", fontSize: 18 }}>Sortare</Text>
         <View
           style={{
             flexDirection: "row",
-            justifyContent: "space-evenly",
+            marginBottom: "2%",
           }}
         >
-          <Button title="Status" onPress={sortDataByStatus} />
-          <Button title="Data" onPress={sortDataByDate} />
-          <Button title="Urgentare" onPress={sortDataByUrgency} />
+          <Text style={{ fontSize: 18 }}>Sortare</Text>
+          <View
+            style={{
+              flexDirection: "row",
+              justifyContent: "space-evenly",
+              width: "90%",
+            }}
+          >
+            <Button title="Status" onPress={sortDataByStatus} />
+            <Button title="Data" onPress={sortDataByDate} />
+            <Button title="Urgentare" onPress={sortDataByUrgency} />
+          </View>
+        </View>
+        <View
+          style={{
+            flexDirection: "row",
+            gap: 5,
+          }}
+        >
+          <Button title="Cereri parcare" color={"gray"} onPress={() => navigation.navigate("ParkingRequestsList")} />
         </View>
       </View>
       <View style={styles.contentContainer}>

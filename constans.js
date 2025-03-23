@@ -1,3 +1,3 @@
-const URL = `192.168.0.102`;
+const URL = `mycampus.adrian-neagu.ro`;
 
 export default { URL };

@@ -15,7 +15,7 @@ export default function RequestsAdminTab({ navigation }) {
         if (isLoading === false) {
           return;
         }
-        const response = await axios.post(`http://${ip}:3000/getRegister-requests`, {
+        const response = await axios.post(`https://${ip}:3000/getRegister-requests`, {
           withCredentials: true,
         });
 
@@ -126,11 +126,7 @@ export default function RequestsAdminTab({ navigation }) {
     <View style={styles.container}>
       <View style={styles.contentContainer}>
         <Text style={{ alignSelf: "center", fontSize: 20, marginBottom: "5%" }}>Inregistrari in asteptare</Text>
-        <FlatList
-          data={data} // Datele listei
-          renderItem={renderItem} // Funcția pentru a randează fiecare element
-          keyExtractor={(item) => item.id} // Extrage un identificator unic pentru fiecare element
-        />
+        <FlatList data={data} renderItem={renderItem} keyExtractor={(item) => item.id} />
       </View>
     </View>
   );

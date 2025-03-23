@@ -10,21 +10,28 @@ const Container = isWeb ? ScrollView : View;
 export default function HomeAdminTab({ navigation, route }) {
   const [isLoading, setIsLoding] = useState(true);
   const [data, setData] = useState({});
+  const [issues, setIssues] = useState({});
   const ip = Platform.OS === "web" ? process.env.EXPO_PUBLIC_LOCAL : process.env.EXPO_PUBLIC_URL;
 
   useEffect(() => {
-    const checkIfIsLogged = async () => {
+    const getAdminData = async () => {
       try {
         if (isLoading === false) {
           return;
         }
-        const response = await axios.get(`http://${ip}:3000/getAdminData`, {
+        const response = await axios.get(`https://${ip}:3000/getAdminData`, {
           withCredentials: true,
         });
 
         if (response.status === 200) {
-          setIsLoding(false);
           setData(response.data);
+        }
+        const response2 = await axios.get(`https://${ip}:3000/getIssues`, {
+          withCredentials: true,
+        });
+
+        if (response2.status === 200) {
+          setIssues(response2.data);
         }
       } catch (error) {
         console.error("Eroare:", error);
@@ -33,7 +40,7 @@ export default function HomeAdminTab({ navigation, route }) {
       }
     };
 
-    checkIfIsLogged();
+    getAdminData();
   }, []);
 
   if (isLoading) {
@@ -44,6 +51,8 @@ export default function HomeAdminTab({ navigation, route }) {
       </View>
     );
   }
+
+  console.log(data, "data din hometabadmin");
 
   return (
     <Container style={styles.container}>
@@ -66,15 +75,17 @@ export default function HomeAdminTab({ navigation, route }) {
       </View> */}
       <View style={styles.top_containers2}>
         <Text style={styles.text_label}>Caminul {data.dormNumber}</Text>
-        <Text>Strada Universității, Nr. 123</Text>
+        <Text>
+          {data.city}, strada {data.street}, Nr. {data.number}
+        </Text>
         <Text> Număr total de camere: 100</Text>
         <Text>Capacitate totală de locuri: {data.dormCapacity} </Text>
       </View>
       <View style={styles.top_containers2}>
         <Text style={styles.text_label}>Stare generală a căminului</Text>
-        <Text style={{ color: "#FF2A04" }}>10 probleme urgente</Text>
-        <Text style={{ color: "#FFAF3D" }}>5 probleme semi-urgente</Text>
-        <Text style={{ color: "#FAD800" }}>1 problema non-urgenta</Text>
+        <Text style={{ color: "#FF2A04" }}>{issues[2] ? issues[2].count : 0} probleme urgente</Text>
+        <Text style={{ color: "#FFAF3D" }}>{issues[1] ? issues[1].count : 0} probleme semi-urgente</Text>
+        <Text style={{ color: "#FAD800" }}>{issues[0] ? issues[0].count : 0} problema non-urgenta</Text>
       </View>
       <View style={styles.top_containers2}>
         <Text style={styles.text_label}>Analiză costuri</Text>

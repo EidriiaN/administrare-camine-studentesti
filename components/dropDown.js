@@ -1,16 +1,8 @@
 import React, { useState } from "react";
 import RNPickerSelect from "react-native-picker-select";
-import { View, Text, TextInput, Button, ActivityIndicator, Alert, Platform, Modal, Pressable } from "react-native";
-import axios from "axios";
-const ip = Platform.OS === "web" ? process.env.EXPO_PUBLIC_LOCAL : process.env.EXPO_PUBLIC_URL;
+import { View, Text, TextInput } from "react-native";
 
-const Dropdown = ({ navigation }) => {
-  const [selectedValue, setSelectedValue] = useState("");
-  const [selectedEmergency, setSelectedEmergency] = useState("");
-  const [message, setMessage] = useState("");
-  const [loading, setLoading] = useState(false);
-  const [modalVisible, setModalVisible] = useState(false);
-
+const Dropdown = ({ selectedValue, setSelectedValue, selectedEmergency, setSelectedEmergency, message, setMessage }) => {
   const placeholder = {
     label: "Alege o optiune...",
   };
@@ -29,38 +21,6 @@ const Dropdown = ({ navigation }) => {
     { label: "Semi-urgent", value: "Semi-urgent" },
     { label: "Urgent", value: "Urgent" },
   ];
-
-  const handleSubmit = async () => {
-    setLoading(true);
-    try {
-      const complainData = {
-        category: selectedValue,
-        urgency: selectedEmergency,
-        message: message,
-      };
-
-      const response = await axios.post(`http://${ip}:3000/addComplain`, complainData, {
-        withCredentials: true,
-      });
-
-      setModalVisible(true);
-      setSelectedValue("");
-      setSelectedEmergency("");
-      setMessage("");
-    } catch (error) {
-      console.error("Eroare la trimiterea anunțului:", error);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  if (loading) {
-    return (
-      <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
-        <ActivityIndicator size={Platform.OS == "web" ? 80 : "large"} color="#00BFFF" />
-      </View>
-    );
-  }
 
   return (
     <View>
@@ -86,25 +46,6 @@ const Dropdown = ({ navigation }) => {
           marginBottom: 30,
         }}
       />
-      <Button title="Trimite" onPress={handleSubmit} disabled={!selectedValue || !selectedEmergency || !message} />
-
-      <Modal visible={modalVisible} animationType="fade" transparent={true} onRequestClose={() => setModalVisible(false)}>
-        <Pressable
-          onPress={() => setModalVisible(false)}
-          style={{ flex: 1, justifyContent: "center", alignItems: "center", backgroundColor: "rgba(0, 0, 0, 0.5)" }}
-        >
-          <View style={{ width: "20%", backgroundColor: "white", padding: 20, borderRadius: 10, alignItems: "center" }}>
-            <Text style={{ color: "#00E200", fontSize: 18, fontWeight: "bold", marginBottom: "10%" }}>Succes!</Text>
-            <Button
-              title="Inchide"
-              onPress={() => {
-                setModalVisible(false);
-                navigation.replace("home", { screen: "Reclamatii" });
-              }}
-            />
-          </View>
-        </Pressable>
-      </Modal>
     </View>
   );
 };

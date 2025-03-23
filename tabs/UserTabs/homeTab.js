@@ -12,24 +12,31 @@ const ip = Platform.OS === "web" ? process.env.EXPO_PUBLIC_LOCAL : process.env.E
 export default function HomeTab({ navigation }) {
   const [dropdownIndex, setDropdownIndex] = useState(null);
   const [loading, setLoading] = useState(false);
-  const [announcesData, setAnnouncesData] = useState();
+  const [userData, setUserData] = useState({});
+  const [announcesData, setAnnouncesData] = useState(null);
 
   useEffect(() => {
-    const getAnnouncesData = async () => {
-      setLoading(true);
+    const fetchData = async () => {
       try {
-        const response = await axios.get(`http://${ip}:3000/getAnnounces`, {
-          withCredentials: true,
-        });
+        setLoading(true);
+        const userInfoResponse = await axios.get(`https://${ip}:3000/getUserInfo`, { withCredentials: true });
+        if (userInfoResponse.data.room_number == null) {
+          console.log(userInfoResponse);
+          return navigation.replace("RoomLess");
+        }
+        setUserData(userInfoResponse.data);
+        console.log(userInfoResponse.data);
 
-        setAnnouncesData(response.data);
+        const announcesResponse = await axios.get(`https://${ip}:3000/getAnnounces`, { withCredentials: true });
+        setAnnouncesData(announcesResponse.data);
       } catch (error) {
-        console.error("Eroare la trimiterea anunțului:", error);
+        console.error("Eroare", error);
       } finally {
         setLoading(false);
       }
     };
-    getAnnouncesData();
+
+    fetchData();
   }, []);
 
   const renderItem = ({ item, index }) => {
@@ -92,7 +99,7 @@ export default function HomeTab({ navigation }) {
   return (
     <Container style={styles.container}>
       <View style={styles.welcome}>
-        <Text style={{ fontSize: 28 }}>Bine ai venit, Adrian 👋</Text>
+        <Text style={{ fontSize: 28 }}>Bine ai venit, {userData.surname} 👋</Text>
       </View>
       <View style={styles.top}>
         <Pressable
@@ -102,11 +109,13 @@ export default function HomeTab({ navigation }) {
           style={styles.top_containers}
         >
           <Text>Camera</Text>
-          <Text>4</Text>
+          <Text>{userData.room_number}</Text>
         </Pressable>
         <View style={styles.top_containers}>
-          <Text>Mai sunt disponibile</Text>
-          <Text>100/200 camere</Text>
+          <Text>Camere libere</Text>
+          <Text>
+            {userData.free_rooms}/{userData.num_total_rooms}
+          </Text>
         </View>
       </View>
 

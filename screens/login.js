@@ -1,8 +1,9 @@
-import { URL } from "../constans";
 import React from "react";
 import { EXPO_PUBLIC_URL } from "@env";
 import { useState } from "react";
 import axios from "axios";
+import OneOptionModal from "../components/OneOptionModal";
+import Loading from "../components/Loading";
 import { View, Image, Text, TextInput, Button, Keyboard, KeyboardAvoidingView, Platform, Pressable, StyleSheet } from "react-native";
 const logo = require("../assets/logo-upg-2.png");
 
@@ -10,6 +11,8 @@ export default function Login({ navigation }) {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [errors, setErrors] = useState({});
+  const [showModal, setShowModal] = useState(false);
+  const [loading, setLoading] = useState(false);
   const ip = Platform.OS === "web" ? process.env.EXPO_PUBLIC_LOCAL : process.env.EXPO_PUBLIC_URL;
 
   const validateForm = () => {
@@ -29,34 +32,35 @@ export default function Login({ navigation }) {
     }
   };
 
-  const handleLogin = () => {
+  const handleLogin = async () => {
     const credentials = {
       email: email,
       password: password,
     };
 
-    axios
-      .post(`http://${ip}:3000/login`, credentials, { withCredentials: true })
-      .then((response) => {
-        if (response.status === 200) {
-          console.log("Autentificare reușită!");
-          setEmail("");
-          setPassword("");
-          setErrors({});
-          const userData = response.data.userData;
-          userData.role === "admin" ? navigation.navigate("homeAdmin", { userData }) : navigation.navigate("home", { userData });
-          // Executați acțiuni corespunzătoare pentru autentificarea reușită
-        } else {
-          console.log("Autentificare eșuată!");
-          // Executați acțiuni corespunzătoare pentru autentificarea eșuată
-        }
-      })
-      .catch((error) => {
-        console.error("Eroare:", error);
-      });
+    try {
+      setLoading(true);
+      const response = await axios.post(`https://${ip}:3000/login`, credentials, { withCredentials: true });
+
+      if (response.status === 200) {
+        console.log("Autentificare reușită!");
+        const userData = response.data.userData;
+        userData.role === "admin" ? navigation.navigate("homeAdmin", { userData }) : navigation.navigate("home", { userData });
+      }
+    } catch (error) {
+      console.error("Eroare:", error);
+      setEmail("");
+      setPassword("");
+      setErrors({});
+      setShowModal(true);
+    } finally {
+      setLoading(false);
+    }
   };
 
-  // const loggedIn = req.session.loggedIn;
+  if (loading) {
+    return <Loading />;
+  }
 
   return (
     <KeyboardAvoidingView behavior="padding" keyboardVerticalOffset={-160} style={styles.container}>
@@ -94,6 +98,7 @@ export default function Login({ navigation }) {
           </Pressable>
         </View>
       </View>
+      <OneOptionModal visible={showModal} text={"Nume sau parolă gresită"} textColor={false} onOption={() => setShowModal(false)} />
     </KeyboardAvoidingView>
   );
 }
